@@ -59,7 +59,7 @@ public class OmniDriveTrain extends LinearOpMode
 {
 
     /* Declare OpMode members. */
-    HardwareOmniDrive robotDrive           = new HardwareOmniDrive();   // Use a Mecanum Drive Train's hardware
+    HardwareOmniDrive robotDrive           = new HardwareOmniDrive();   // Use a Omni Drive Train's hardware
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -74,6 +74,8 @@ public class OmniDriveTrain extends LinearOpMode
         double backLeftPower;
         double max;
         double turbo;
+        int elevadorPower;
+        int disparadorPower;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -88,57 +90,61 @@ public class OmniDriveTrain extends LinearOpMode
         waitForStart();
 
         // run until the end of the match (driver presses STOP)
-        while (opModeIsActive())
-        {
+        while (opModeIsActive()) {
             //Sets the turbo mode for the motors to normal when the right bumper is not pressed
             // or to max speed (turbo) when it is pressed
-            if (gamepad1.right_bumper)
-            {
+            if (gamepad1.a) {
+                elevadorPower = 1;
+            } else
+                elevadorPower = 0;
+
+
+            if (gamepad1.right_bumper) {
                 turbo = 1;
-            }
-            else
+            } else
                 turbo = .2;
             // Sets the joystick values to variables for better math understanding
             // The Y axis goes
-            y1  = gamepad1.left_stick_y;
-            x1  = gamepad1.left_stick_x;
-            x2  = gamepad1.right_stick_x;
+            y1 = gamepad1.left_stick_y;
+            x1 = gamepad1.left_stick_x;
+            x2 = gamepad1.right_stick_x;
 
             // sets the math necessary to control the motors to variables
             // The left stick controls the axial movement
             // The right sick controls the rotation
-            frontRightPower     = y1 - x2 - x1;
-            backRightPower      = y1 - x2 + x1;
-            frontLeftPower      = y1 + x2 + x1;
-            backLeftPower       = y1 + x2 - x1;
+            frontRightPower = y1 - x2 - x1;
+            backRightPower = y1 - x2 + x1;
+            frontLeftPower = y1 + x2 + x1;
+            backLeftPower = y1 + x2 - x1;
 
             // Normalize the values so neither exceed +/- 1.0
-            max =  Math.max(Math.abs(frontRightPower), Math.max(Math.abs(backRightPower),
+            max = Math.max(Math.abs(frontRightPower), Math.max(Math.abs(backRightPower),
                     Math.max(Math.abs(frontLeftPower), Math.abs(backLeftPower))));
-            if (max > 1.0)
-            {
-                frontRightPower     /= max;
-                backRightPower      /= max;
-                frontLeftPower      /= max;
-                backLeftPower       /= max;
+            if (max > 1.0) {
+                frontRightPower /= max;
+                backRightPower /= max;
+                frontLeftPower /= max;
+                backLeftPower /= max;
             }
 
             // sets the speed for the motros with the turbo multiplier
-            frontRightPower     *= turbo;
-            backRightPower      *= turbo;
-            frontLeftPower      *= turbo;
-            backLeftPower       *= turbo;
+            frontRightPower *= turbo;
+            backRightPower *= turbo;
+            frontLeftPower *= turbo;
+            backLeftPower *= turbo;
 
             robotDrive.frontRightMotor.setPower(frontRightPower);
             robotDrive.backRightMotor.setPower(backRightPower);
             robotDrive.frontLeftMotor.setPower(frontLeftPower);
             robotDrive.backLeftMotor.setPower(backLeftPower);
+            robotDrive.elevadorMotor.setPower(elevadorPower);
 
             // Send telemetry message to signify robot running;
             telemetry.update();
 
             // Pause for metronome tick.  40 mS each cycle = update 25 times a second.
             robotDrive.waitForTick(40);
+
         }
     }
 }
