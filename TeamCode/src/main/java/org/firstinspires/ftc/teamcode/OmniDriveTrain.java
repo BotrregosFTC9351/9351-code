@@ -74,8 +74,6 @@ public class OmniDriveTrain extends LinearOpMode
         double backLeftPower;
         double max;
         double turbo;
-        int elevadorPower;
-        int disparadorPower;
 
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
@@ -93,15 +91,11 @@ public class OmniDriveTrain extends LinearOpMode
         while (opModeIsActive()) {
             //Sets the turbo mode for the motors to normal when the right bumper is not pressed
             // or to max speed (turbo) when it is pressed
-            if (gamepad1.a) {
-                elevadorPower = 1;
-            } else
-                elevadorPower = 0;
+            if (gamepad1.a)
+                robotDrive.elevadorMotor.setPower(1);
+            else if (gamepad1.x)
+                robotDrive.disparadorMotor.setPower(1);
 
-            if (gamepad1.x) {
-                disparadorPower = 1;
-            } else
-                disparadorPower = 0;
 
             if (gamepad1.right_bumper) {
                 turbo = 1;
