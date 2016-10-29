@@ -96,7 +96,6 @@ public class OmniDriveTrain extends LinearOpMode
             else if (gamepad1.x)
                 robotDrive.disparadorMotor.setPower(1);
 
-
             if (gamepad1.right_bumper) {
                 turbo = 1;
             } else
@@ -135,8 +134,6 @@ public class OmniDriveTrain extends LinearOpMode
             robotDrive.backRightMotor.setPower(backRightPower);
             robotDrive.frontLeftMotor.setPower(frontLeftPower);
             robotDrive.backLeftMotor.setPower(backLeftPower);
-            robotDrive.elevadorMotor.setPower(elevadorPower);
-            robotDrive.disparadorMotor.setPower(disparadorPower);
 
             // Send telemetry message to signify robot running;
             telemetry.update();
