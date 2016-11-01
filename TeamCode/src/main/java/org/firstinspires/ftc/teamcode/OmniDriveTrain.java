@@ -95,6 +95,8 @@ public class OmniDriveTrain extends LinearOpMode
                 robotDrive.elevadorMotor.setPower(1);
             else if (gamepad1.x)
                 robotDrive.disparadorMotor.setPower(1);
+            else if (gamepad1.y)
+                robotDrive.tobyMotor.setPower(1);
 
             if (gamepad1.right_bumper) {
                 turbo = 1;

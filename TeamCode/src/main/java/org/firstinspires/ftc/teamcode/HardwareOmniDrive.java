@@ -25,6 +25,7 @@ public class HardwareOmniDrive
     public DcMotor  backLeftMotor    = null;
     public DcMotor elevadorMotor = null;
     public DcMotor disparadorMotor = null;
+    public DcMotor tobyMotor = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
@@ -49,6 +50,7 @@ public class HardwareOmniDrive
         backLeftMotor  = hwMap.dcMotor.get("bl");
         elevadorMotor = hwMap.dcMotor.get("elev");
         disparadorMotor = hwMap.dcMotor.get("disp");
+        tobyMotor = hwMap.dcMotor.get("toby");
 
         frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
@@ -56,6 +58,7 @@ public class HardwareOmniDrive
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);// Set to REVERSE to normalize movement
         elevadorMotor.setDirection(DcMotor.Direction.REVERSE);
         disparadorMotor.setDirection(DcMotor.Direction.REVERSE);
+        tobyMotor.setDirection(DcMotor.Direction.REVERSE);
 
         // Set all motors to zero power
         frontRightMotor.setPower(0);
@@ -64,6 +67,7 @@ public class HardwareOmniDrive
         backLeftMotor.setPower(0);
         elevadorMotor.setPower(0);
         disparadorMotor.setPower(0);
+        tobyMotor.setPower(0);
 
         // Set all motors to run without encoders.
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -72,6 +76,7 @@ public class HardwareOmniDrive
         backLeftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         elevadorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         disparadorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        tobyMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /***
