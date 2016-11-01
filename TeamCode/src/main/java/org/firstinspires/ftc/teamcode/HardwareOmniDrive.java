@@ -56,9 +56,9 @@ public class HardwareOmniDrive
         backRightMotor.setDirection(DcMotor.Direction.FORWARD);
         frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);// Set to REVERSE to normalize movement
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);// Set to REVERSE to normalize movement
-        elevadorMotor.setDirection(DcMotor.Direction.REVERSE);
+        elevadorMotor.setDirection(DcMotor.Direction.FORWARD);
         disparadorMotor.setDirection(DcMotor.Direction.REVERSE);
-        tobyMotor.setDirection(DcMotor.Direction.REVERSE);
+        tobyMotor.setDirection(DcMotor.Direction.FORWARD);
 
         // Set all motors to zero power
         frontRightMotor.setPower(0);

@@ -93,11 +93,16 @@ public class OmniDriveTrain extends LinearOpMode
             // or to max speed (turbo) when it is pressed
             if (gamepad1.a)
                 robotDrive.elevadorMotor.setPower(1);
-            else if (gamepad1.x)
+            else
+                robotDrive.elevadorMotor.setPower(0);
+            if (gamepad1.x)
                 robotDrive.disparadorMotor.setPower(1);
-            else if (gamepad1.y)
+            else
+                robotDrive.disparadorMotor.setPower(0);
+            if (gamepad1.y)
                 robotDrive.tobyMotor.setPower(1);
-
+            else
+                robotDrive.tobyMotor.setPower(0);
             if (gamepad1.right_bumper) {
                 turbo = 1;
             } else
