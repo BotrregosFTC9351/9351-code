@@ -75,11 +75,11 @@ public class Autonomo extends LinearOpMode
         waitForStart();
 
         RaiseServo();
-        DriveForwardTime(DRIVE_POWER, 4000);
-        TurnLeftTime(DRIVE_POWER,4000);
-        DriveForwardTime(DRIVE_POWER, 4000);
-        TurnRightTime(DRIVE_POWER, 4000);
-        DriveForwardTime(DRIVE_POWER, 4000);
+        DriveForwardTime(DRIVE_POWER, 2000);
+        TurnLeftTime(DRIVE_POWER,2000);
+        DriveForwardTime(DRIVE_POWER, 2000);
+        TurnRightTime(DRIVE_POWER, 2000);
+        DriveForwardTime(DRIVE_POWER, 2000);
         StopDriving();
         LowerServo();
 
