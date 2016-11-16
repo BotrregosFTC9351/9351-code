@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Motor channel:  Back Left Motor:        "bl"
  *
  */
-public class HardwareDisparador
+public class    HardwareDisparador
 {
     /* Public OpMode members. */
     public DcMotor disparadorMotor = null;
@@ -40,7 +40,7 @@ public class HardwareDisparador
 
         disparadorMotor.setDirection(DcMotor.Direction.REVERSE);
 
-        disparadorMotor.setPower(0);
+        disparadorMotor.setPower(0.0);
 
         disparadorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 

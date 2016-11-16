@@ -59,10 +59,10 @@ public class HardwareOmniWheels
         backLeftMotor.setDirection(DcMotor.Direction.REVERSE);// Set to REVERSE to normalize movement
 
         // Set all motors to zero power
-        frontRightMotor.setPower(0);
-        backRightMotor.setPower(0);
-        frontLeftMotor.setPower(0);
-        backLeftMotor.setPower(0);
+        frontRightMotor.setPower(0.0);
+        backRightMotor.setPower(0.0);
+        frontLeftMotor.setPower(0.0);
+        backLeftMotor.setPower(0.0);
 
         // Set all motors to run without encoders.
         frontRightMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

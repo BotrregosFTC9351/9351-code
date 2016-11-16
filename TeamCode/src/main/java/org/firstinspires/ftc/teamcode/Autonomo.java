@@ -34,7 +34,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 
 /**
@@ -52,7 +53,6 @@ import com.qualcomm.robotcore.hardware.Servo;
  */
 
 @Autonomous(name="Autonomo")
-//@Disabled
 public class Autonomo extends LinearOpMode
 {
 
@@ -69,17 +69,20 @@ public class Autonomo extends LinearOpMode
          * The init() method of the hardware class does all the work here
          */
         robotDrive.init(hardwareMap);
+        elevador.init(hardwareMap);
+        disparador.init(hardwareMap);
+        servo.init(hardwareMap);
 
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         RaiseServo();
-        DriveForwardTime(DRIVE_POWER, 2000);
-        TurnLeftTime(DRIVE_POWER,2000);
-        DriveForwardTime(DRIVE_POWER, 2000);
-        TurnRightTime(DRIVE_POWER, 2000);
-        DriveForwardTime(DRIVE_POWER, 2000);
+        DriveForwardTime(DRIVE_POWER, 1000);
+        TurnLeftTime(DRIVE_POWER,1000);
+        DriveForwardTime(DRIVE_POWER, 1000);
+        TurnRightTime(DRIVE_POWER, 1000);
+        DriveForwardTime(DRIVE_POWER, 1000);
         StopDriving();
         LowerServo();
 
@@ -107,7 +110,8 @@ public class Autonomo extends LinearOpMode
     public void StopDriving (){
         DriveForward(0);
     }
-     public void DriveForwardTime (double power, long time) throws InterruptedException{
+
+    public void DriveForwardTime (double power, long time) throws InterruptedException{
         DriveForward(power);
         Thread.sleep(time);
     }

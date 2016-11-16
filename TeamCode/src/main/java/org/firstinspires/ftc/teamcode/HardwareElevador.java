@@ -40,7 +40,7 @@ public class HardwareElevador
 
         elevadorMotor.setDirection(DcMotor.Direction.FORWARD);
 
-        elevadorMotor.setPower(0);
+        elevadorMotor.setPower(0.0);
 
         elevadorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }

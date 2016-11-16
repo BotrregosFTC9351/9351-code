@@ -36,6 +36,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
@@ -72,6 +73,9 @@ public class OmniDriveTrain extends LinearOpMode
          * The init() method of the hardware class does all the work here
          */
         robotDrive.init(hardwareMap);
+        elevador.init(hardwareMap);
+        disparador.init(hardwareMap);
+        servo.init(hardwareMap);
 
         // Send telemetry message to signify robot waiting;
         telemetry.addData("here comes dat bot", "Oh hey, waddup");
