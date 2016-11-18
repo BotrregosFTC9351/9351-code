@@ -19,8 +19,8 @@ public class HardwareServo
     /* Public OpMode members. */
     public Servo servo = null;
 
-    public double Arm_Min = 0.1;
-    public double Arm_Max = .9;
+    public double Arm_Max = .3;
+    public double Arm_Min = 1.0;
 
 
     /* local OpMode members. */

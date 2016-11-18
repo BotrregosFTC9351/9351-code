@@ -88,7 +88,7 @@ public class OmniDriveTrain extends LinearOpMode
         while (opModeIsActive()) {
             //Sets the turbo mode for the motors to normal when the right bumper is not pressed
             // or to max speed (turbo) when it is pressed
-            if (gamepad1.a)
+            if (gamepad1.b)
                 elevador.elevadorMotor.setPower(1);
             else
                 elevador.elevadorMotor.setPower(0);
@@ -96,11 +96,10 @@ public class OmniDriveTrain extends LinearOpMode
                 disparador.disparadorMotor.setPower(1);
             else
                 disparador.disparadorMotor.setPower(0);
-
-            if (gamepad1.a){
+            if (gamepad1.y){
                 servo.servo.setPosition(servo.Arm_Max);
             }
-            else if (gamepad1.x){
+            else if (gamepad1.a){
                 servo.servo.setPosition(servo.Arm_Min);
             }
 
