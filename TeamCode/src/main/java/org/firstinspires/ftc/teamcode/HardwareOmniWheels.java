@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 public class HardwareOmniWheels
 {
     /* Public OpMode members. */
+
     public DcMotor  frontRightMotor   = null;
     public DcMotor  backRightMotor  = null;
     public DcMotor  frontLeftMotor    = null;
@@ -80,6 +81,7 @@ public class HardwareOmniWheels
      * @param periodMs  Length of wait cycle in mSec.
      * @throws InterruptedException
      */
+
     public void waitForTick(long periodMs) throws InterruptedException
     {
 
@@ -87,7 +89,9 @@ public class HardwareOmniWheels
 
         // sleep for the remaining portion of the regular cycle period.
         if (remaining > 0)
+        {
             Thread.sleep(remaining);
+        }
 
         // Reset the cycle clock for the next pass.
         period.reset();

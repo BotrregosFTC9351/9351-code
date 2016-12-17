@@ -32,15 +32,10 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
-import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
  * This OpMode uses the common Pushbot hardware class to define the devices on the robot.
@@ -56,9 +51,9 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@TeleOp(name="OmniDriveTrain")
+@TeleOp(name="OmniDriveTrainTest")
 //@Disabled
-public class OmniDriveTrain extends LinearOpMode
+public class OmniDriveTrainTest extends LinearOpMode
 {
 
     /* Declare OpMode members. */
@@ -68,8 +63,6 @@ public class OmniDriveTrain extends LinearOpMode
     HardwareDisparador disparador = new HardwareDisparador();
     HardwarePelotota pelotota = new HardwarePelotota();
 
-    double          pinzasOffset      = 0;                       // Servo mid position
-    final double    velocidadpinzas      = 0.02 ;                   // sets rate to move servo
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -85,6 +78,10 @@ public class OmniDriveTrain extends LinearOpMode
         servo.init(hardwareMap);
         pelotota.init(hardwareMap);
 
+        double position = 0.0;
+        double positionSR = 0.0;
+        double positionSL = 0.0;
+
         // Send telemetry message to signify robot waiting;
 
         telemetry.addData("here comes dat bot", "Oh hey, waddup");
@@ -98,46 +95,56 @@ public class OmniDriveTrain extends LinearOpMode
 
         while (opModeIsActive())
         {
-            //Sets the turbo mode for the motors to normal when the right bumper is not pressed
-            // or to max speed (turbo) when it is pressed
-
-            if (gamepad2.a)
+            if (gamepad2.x)
             {
-                Dispara(1, 1440);
+                position = 1.0;
+
+            }
+            else if (gamepad2.b)
+            {
+                position = -0.15;
+            } else
+            {
+                position = 0.0;
             }
 
-            // encoderDrive(.5, 12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-            // encoderDrive(.5, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
+            telemetry.addData("disparador: ", position) ;
+            disparador.disparadorMotor.setPower(position);
 
             //para elevar la pelota grande
             {
-                double subir = gamepad2.right_trigger;
-                double bajar = -gamepad2.left_trigger;
-                double direccion = 0;
+                double elevadorDerecho = -gamepad2.right_stick_y;
+                double elevadorIzquierdo = -gamepad2.left_stick_y;
+                double direccionDerecho = 0;
+                double direccionIzquierdo =0 ;
 
 
-                if ( gamepad2.right_trigger < .01  && gamepad2.left_trigger < .01)
+                if ( Math.abs(gamepad2.right_stick_y)> .07);
                 {
-                    direccion = direccion;
+                    direccionDerecho = elevadorDerecho;
                 }
 
-                if (gamepad2.right_trigger > .01 && gamepad2.left_trigger < .01)
+                if ( Math.abs(gamepad2.left_stick_y)> .07);
                 {
-                    direccion = subir;
+                    direccionIzquierdo = elevadorIzquierdo;
                 }
 
-                if (gamepad2.right_trigger < .01 && gamepad2.left_trigger > .01)
+                if ( Math.abs(gamepad2.right_stick_y)< .07);
                 {
-                    direccion = bajar;
+                    direccionDerecho = direccionDerecho;
                 }
 
-                if (gamepad2.right_trigger > .1 && gamepad2.left_trigger > .1)
+                if ( Math.abs(gamepad2.left_stick_y)< .07);
                 {
-                    direccion = direccion;
+                    direccionIzquierdo= direccionIzquierdo;
                 }
 
-                pelotota.PL.setPower(direccion);
-                pelotota.PR.setPower(direccion);
+
+                telemetry.addData("elevador telescopico derecho: ", direccionDerecho);
+                telemetry.addData("elevador telescopico izquierdo: ", direccionIzquierdo);
+
+                pelotota.PL.setPower(direccionIzquierdo);
+                pelotota.PR.setPower(direccionDerecho);
 
             }
 
@@ -161,29 +168,44 @@ public class OmniDriveTrain extends LinearOpMode
             }
 
             elevador.elevadorMotor.setPower(banda_direccion);
+            telemetry.addData("banda", banda_direccion);
 
+            double          pinzasOffset      = 0;                       // Servo mid position
+            final double    velocidadpinzas      = 0.02 ;                   // sets rate to move servo
 
-
-            // Use gamepad left & right Bumpers to open and close the claw
             if (gamepad2.right_bumper)
-                pinzasOffset += velocidadpinzas;
+            {
+                positionSL = .9;
+                positionSR = .1;
+            }
             else if (gamepad2.left_bumper)
-                pinzasOffset -= velocidadpinzas;
+            {
+                positionSL = .1;
+                positionSR = .9;
+            }
 
-            // Move both servos to new position.  Assume servos are mirror image of each other.
-            pinzasOffset = Range.clip(pinzasOffset, -0.5, 0.5);
-            servo.SR.setPosition(servo.Arm_Max/2 + pinzasOffset);
-            servo.SL.setPosition(servo.Arm_Max/2 - pinzasOffset);
+            telemetry.addData("servoR: ", positionSR) ;
+            telemetry.addData("servoL: ", positionSL) ;
+            servo.SL.setPosition(positionSL);
+            servo.SR.setPosition(positionSR);
+            //  Sets the turbo mode for the motors to normal when the right bumper is not pressed
+            //  or to max speed (turbo) when it is pressed
 
+            double turbo = 0;
             if (gamepad1.right_bumper)
             {
                 robotDrive.turbo = 1;
+                turbo = 1;
             }
 
             else
             {
                 robotDrive.turbo = .5;
+
+                turbo = .5;
             }
+
+            telemetry.addData("velocidad", turbo);
 
             // Sets the joystick values to variables for better math understanding
             // The Y axis goes
@@ -191,6 +213,11 @@ public class OmniDriveTrain extends LinearOpMode
             robotDrive.y1 = gamepad1.left_stick_y;
             robotDrive.x1 = gamepad1.left_stick_x;
             robotDrive.x2 = gamepad1.right_stick_x;
+            double y1 = gamepad1.left_stick_y;
+            double x1 = gamepad1.left_stick_x;
+            double x2 = gamepad1.right_stick_x;
+
+
 
             // sets the math necessary to control the motors to variables
             // The left stick controls the axial movement
@@ -200,12 +227,18 @@ public class OmniDriveTrain extends LinearOpMode
             robotDrive.backRightPower = robotDrive.y1 - robotDrive.x2 + robotDrive.x1;
             robotDrive.frontLeftPower = robotDrive.y1 + robotDrive.x2 + robotDrive.x1;
             robotDrive.backLeftPower = robotDrive.y1 + robotDrive.x2 - robotDrive.x1;
+            double frontRightPower  = y1 - x2 - x1;
+            double backRightPower   = y1 - x2 + x1;
+            double frontLeftPower   = y1 + x2 + x1;
+            double backLeftPower    = y1 + x2 - x1;
 
             // Normalize the values so neither exceed +/- 1.0
 
             robotDrive.max = Math.max(Math.abs(robotDrive.frontRightPower), Math.max(Math.abs(robotDrive.backRightPower),
             Math.max(Math.abs(robotDrive.frontLeftPower), Math.abs(robotDrive.backLeftPower))));
-
+            double max = Math.max(Math.abs(frontRightPower), Math.max(Math.abs(backRightPower),
+            Math.max(Math.abs(frontLeftPower), Math.abs(backLeftPower))));
+//
             if (robotDrive.max > 1.0)
             {
             robotDrive.frontRightPower /= robotDrive.max;
@@ -213,18 +246,34 @@ public class OmniDriveTrain extends LinearOpMode
             robotDrive.frontLeftPower /= robotDrive.max;
             robotDrive.backLeftPower /= robotDrive.max;
             }
+            if (max > 1.0)
+            {
+            frontRightPower /= max;
+            backRightPower  /= max;
+            frontLeftPower  /= max;
+            backLeftPower   /= max;
+            }
 
             // sets the speed for the motros with the turbo multiplier
-
+//
             robotDrive.frontRightPower *= robotDrive.turbo;
             robotDrive.backRightPower *= robotDrive.turbo;
             robotDrive.frontLeftPower *= robotDrive.turbo;
             robotDrive.backLeftPower *= robotDrive.turbo;
+            frontRightPower *= turbo;
+            backRightPower  *= turbo;
+            frontLeftPower  *= turbo;
+            backLeftPower   *= turbo;
 
+//
             robotDrive.frontRightMotor.setPower(robotDrive.frontRightPower);
             robotDrive.backRightMotor.setPower(robotDrive.backRightPower);
             robotDrive.frontLeftMotor.setPower(robotDrive.frontLeftPower);
             robotDrive.backLeftMotor.setPower(robotDrive.backLeftPower);
+            telemetry.addData("front right:", frontRightPower);
+            telemetry.addData("back right:", backRightPower);
+            telemetry.addData("front left:", frontLeftPower);
+            telemetry.addData("back left:", backLeftPower);
 
             // Send telemetry message to signify robot running;
 
@@ -236,21 +285,4 @@ public class OmniDriveTrain extends LinearOpMode
 
         }
     }
-
-    public void Dispara (double power, int distance)
-    {
-        disparador.disparadorMotor.setMode(DcMotor.RunMode.RESET_ENCODERS);
-        disparador.disparadorMotor.setTargetPosition(distance);
-        disparador.disparadorMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        disparador.disparadorMotor.setPower(power);
-
-        while (disparador.disparadorMotor.isBusy())
-        {
-
-        }
-
-        disparador.disparadorMotor.setPower(0);
-        disparador.disparadorMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-    }
-
 }

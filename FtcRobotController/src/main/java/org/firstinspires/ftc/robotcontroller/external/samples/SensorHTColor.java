@@ -57,9 +57,7 @@ import com.qualcomm.robotcore.hardware.ColorSensor;
 public class SensorHTColor extends LinearOpMode {
 
   ColorSensor colorSensor;  // Hardware Device Object
-
-
-  @Override
+   @Override
   public void runOpMode() {
 
     // hsvValues is an array that will hold the hue, saturation, and value information.

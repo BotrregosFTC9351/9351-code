@@ -1,51 +1,47 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * This is NOT an opmode.
- *
- * This class declares and initializes all hardware needed to control a Omni Drive Train
- * Motor channel:  Front Right Motor:        "fr"
- * Motor channel:  Back Right Motor:        "br"
- * Motor channel:  Front Left Motor:        "fl"
- * Motor channel:  Back Left Motor:        "bl"
- *
  */
-public class HardwareServo
+public class HardwarePelotota
 {
     /* Public OpMode members. */
-    public Servo SL = null;
-    public Servo SR = null;
-
-    public double Arm_Max = .3;
-    public double Arm_Min = 1.0;
-
+    public DcMotor PL = null;
+    public DcMotor PR = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
-    public HardwareServo()
+    public HardwarePelotota()
     {
+
     }
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap)
     {
-
         // Save reference to Hardware map
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        SL = hwMap.servo.get("sl");
-        SR = hwMap.servo.get("sr");
+        PL = hwMap.dcMotor.get("pl");
+        PR = hwMap.dcMotor.get("pr");
 
-        SL.setPosition(0.0);
-        SR.setPosition(0.0);
+        PL.setDirection(DcMotor.Direction.REVERSE);
+        PR.setDirection(DcMotor.Direction.FORWARD);
+
+        PL.setPower(0.0);
+        PR.setPower(0.0);
+
+        PL.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        PR.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     /***

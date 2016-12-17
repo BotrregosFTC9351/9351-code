@@ -1,17 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorController;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-/**
- * This is NOT an opmode.
- *
- * This class declares and initializes all hardware needed to control a Omni Drive Train
- * Motor channel:  Front Right Motor:        "fr"
- * Motor channel:  Back Right Motor:        "br"
- * Motor channel:  Front Left Motor:        "fl"
- * Motor channel:  Back Left Motor:        "bl"
+/*
  *
  */
 public class    HardwareDisparador
@@ -22,6 +17,7 @@ public class    HardwareDisparador
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
+    public ElapsedTime     runtime = new ElapsedTime();
 
     /* Constructor */
     public HardwareDisparador()
@@ -37,13 +33,9 @@ public class    HardwareDisparador
 
         // Define and Initialize Motors
         disparadorMotor = hwMap.dcMotor.get("disp");
-
         disparadorMotor.setDirection(DcMotor.Direction.REVERSE);
-
-        disparadorMotor.setPower(0.0);
-
+        disparadorMotor.setPower(0);
         disparadorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
     }
 
     /***

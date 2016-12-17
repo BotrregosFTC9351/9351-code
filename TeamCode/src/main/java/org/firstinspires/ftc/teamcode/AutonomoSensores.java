@@ -32,10 +32,17 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+import android.app.Activity;
+import android.graphics.Color;
+import android.view.View;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.LightSensor;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 
 /**
@@ -52,83 +59,95 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Autonomo")
-public class Autonomo extends LinearOpMode
+@Autonomous(name="AutonomoSensores")
+public class AutonomoSensores extends LinearOpMode
 {
 
     /* Declare OpMode members. */
-    HardwareOmniWheels robotDrive           = new HardwareOmniWheels();   // Use a Omni Drive Train's hardware
+    HardwareOmniWheels robotDrive = new HardwareOmniWheels();   // Use a Omni Drive Train's hardware
     HardwareServo servo = new HardwareServo();
     HardwareElevador elevador = new HardwareElevador();
     HardwareDisparador disparador = new HardwareDisparador();
-
-    @Override
-    public void runOpMode() throws InterruptedException
-    {
-        // Declares variables used on the program
-        /* Initialize the hardware variables.
-         * The init() method of the hardware class does all the work here
-         */
-        robotDrive.init(hardwareMap);
-        elevador.init(hardwareMap);
-        disparador.init(hardwareMap);
-        servo.init(hardwareMap);
+    OpticalDistanceSensor odsSensor;  // Hardware Device Object
+    ColorSensor colorSensor;  // Hardware Device Object
+    LightSensor lightSensor;  // Hardware Device Object
 
 
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
+       @Override
+    public void runOpMode() throws InterruptedException {
 
-        DriveForwardTime(DRIVE_POWER, 1000);
-        TurnLeftTime(DRIVE_POWER,1000);
-        DriveForwardTime(DRIVE_POWER, 1000);
-        TurnRightTime(DRIVE_POWER, 1000);
-        DriveForwardTime(DRIVE_POWER, 1000);
-        StopDriving();
+           ElapsedTime period = new ElapsedTime();
 
-    }
+           float hsvValues[] = {0F, 0F, 0F};
+           boolean bLedOnCOLOR = true;
+           double whiteLineIntensityValue = 23.6; //Replace accordingly
+           double blackMatIntensityValue = 1.24;  //And here
+           double targetIntensity = whiteLineIntensityValue + blackMatIntensityValue / 2;
+           boolean bLedOnLL = true;
+           boolean bLedOnOD = true;
+
+           robotDrive.init(hardwareMap);
+           elevador.init(hardwareMap);
+           disparador.init(hardwareMap);
+           servo.init(hardwareMap);
+
+           odsSensor = hardwareMap.opticalDistanceSensor.get("sensorOD");
+           colorSensor = hardwareMap.colorSensor.get("sensorColor");
+           lightSensor = hardwareMap.lightSensor.get("sensorLight");
+
+           Color.RGBToHSV(colorSensor.red(), colorSensor.green(), colorSensor.blue(), hsvValues);
+
+           waitForStart();
+           while (opModeIsActive()) {
+               while (colorSensor.alpha() < 5) {
+                   DriveForward(DRIVE_POWER);
+                   sleep(100);
+               }
+               StopDriving();
+               while (odsSensor.getLightDetected() > 0.0189) { //value continuously checked
+                   if (Math.abs(colorSensor.alpha() - targetIntensity) <= 5) {
+                       DriveForward(DRIVE_POWER);
+                       sleep(100);
+                   } else if (colorSensor.alpha() > targetIntensity) {
+                       TurnLeft(DRIVE_POWER);
+                       sleep(100);
+                   } else if (colorSensor.alpha() < targetIntensity) {
+                       TurnRight(DRIVE_POWER);
+                       sleep(100);
+                   } else {
+                       System.out.println("Error");
+                       sleep(100);
+                       break;
+                   }
+               }
+               StopDriving();
+           }
+       }
+
     double DRIVE_POWER = 1.0;
 
-    public void DriveForward (double power)
-    {
+    public void DriveForward (double power){
         robotDrive.frontLeftMotor.setPower(power);
         robotDrive.frontRightMotor.setPower(power);
         robotDrive.backLeftMotor.setPower(power);
         robotDrive.backRightMotor.setPower(power);
     }
-    public void TurnRight (double power)
-    {
+    public void TurnRight (double power){
         robotDrive.frontLeftMotor.setPower(power);
         robotDrive.frontRightMotor.setPower(-power);
         robotDrive.backLeftMotor.setPower(power);
         robotDrive.backRightMotor.setPower(-power);
     }
-    public void TurnLeft (double power)
-    {
+    public void TurnLeft (double power){
         robotDrive.frontLeftMotor.setPower(-power);
         robotDrive.frontRightMotor.setPower(power);
         robotDrive.backLeftMotor.setPower(-power);
         robotDrive.backRightMotor.setPower(power);
     }
-    public void StopDriving ()
-    {
+    public void StopDriving (){
         DriveForward(0);
     }
 
-    public void DriveForwardTime (double power, long time) throws InterruptedException
-    {
-        DriveForward(power);
-        Thread.sleep(time);
-    }
-    public void TurnRightTime (double power, long time) throws InterruptedException
-    {
-        TurnRight(power);
-        Thread.sleep(time);
-    }
-    public void TurnLeftTime (double power, long time) throws InterruptedException
-    {
-        TurnLeft(power);
-        Thread.sleep(time);
-    }
 
 }
 

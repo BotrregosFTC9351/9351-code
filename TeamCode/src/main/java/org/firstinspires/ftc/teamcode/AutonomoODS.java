@@ -34,8 +34,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
 
 /**
@@ -52,8 +51,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Disabled;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Autonomo")
-public class Autonomo extends LinearOpMode
+@Autonomous(name="AutonomoODS")
+public class AutonomoODS extends LinearOpMode
 {
 
     /* Declare OpMode members. */
@@ -69,21 +68,39 @@ public class Autonomo extends LinearOpMode
         /* Initialize the hardware variables.
          * The init() method of the hardware class does all the work here
          */
+        final double PERFECT_COLOR_VALUE = 0.2;
+        OpticalDistanceSensor ODS = null;
+
         robotDrive.init(hardwareMap);
         elevador.init(hardwareMap);
         disparador.init(hardwareMap);
         servo.init(hardwareMap);
 
-
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        DriveForwardTime(DRIVE_POWER, 1000);
-        TurnLeftTime(DRIVE_POWER,1000);
-        DriveForwardTime(DRIVE_POWER, 1000);
-        TurnRightTime(DRIVE_POWER, 1000);
-        DriveForwardTime(DRIVE_POWER, 1000);
-        StopDriving();
+        telemetry.addData("Color Value", ODS.getLightDetected());
+
+        while (true) {
+            double correction = (PERFECT_COLOR_VALUE - ODS.getLightDetected());
+            // Sets the powers so they are no less than .075 and apply to correction
+            if (correction <= 0) {
+                robotDrive.backLeftPower = .075d - correction;
+                robotDrive.frontLeftPower = .075d - correction;
+                robotDrive.frontRightPower = .075d;
+                robotDrive.backRightPower = .075d;
+            } else {
+                robotDrive.backLeftPower = .075d;
+                robotDrive.frontLeftPower = .075d;
+                robotDrive.frontRightPower = .075d + correction;
+                robotDrive.backRightPower = .075d + correction;
+            }
+            // Sets the powers to the motors
+            robotDrive.frontLeftMotor.setPower(robotDrive.frontLeftPower);
+            robotDrive.backLeftMotor.setPower(robotDrive.backLeftPower);
+            robotDrive.frontRightMotor.setPower(robotDrive.frontRightPower);
+            robotDrive.backRightMotor.setPower(robotDrive.backRightPower);
+        }
 
     }
     double DRIVE_POWER = 1.0;
@@ -114,21 +131,7 @@ public class Autonomo extends LinearOpMode
         DriveForward(0);
     }
 
-    public void DriveForwardTime (double power, long time) throws InterruptedException
-    {
-        DriveForward(power);
-        Thread.sleep(time);
-    }
-    public void TurnRightTime (double power, long time) throws InterruptedException
-    {
-        TurnRight(power);
-        Thread.sleep(time);
-    }
-    public void TurnLeftTime (double power, long time) throws InterruptedException
-    {
-        TurnLeft(power);
-        Thread.sleep(time);
-    }
+
 
 }
 
