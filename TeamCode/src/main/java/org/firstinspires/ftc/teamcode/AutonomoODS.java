@@ -33,6 +33,7 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
@@ -52,6 +53,7 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
  */
 
 @Autonomous(name="AutonomoODS")
+@Disabled
 public class AutonomoODS extends LinearOpMode
 {
 

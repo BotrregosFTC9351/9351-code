@@ -33,9 +33,9 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.ftcrobotcontroller.R;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.RobotLog;
 
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
@@ -84,10 +84,12 @@ import java.util.List;
  * is explained below.
  */
 
-@Autonomous(name="Concept: Vuforia Navigation", group ="Concept")
-@Disabled
-public class vuforiaConcept extends LinearOpMode {
+@TeleOp(name="saul Vuforia Navigation", group ="Concept")
 
+public class SaulVuforiaNavigation2 extends LinearOpMode
+{
+
+    HardwareOmniWheelsForAuton robotDrive           = new HardwareOmniWheelsForAuton();   // Use a Omni Drive Train's hardware
     public static final String TAG = "Vuforia Sample";
 
     OpenGLMatrix lastLocation = null;
@@ -96,9 +98,13 @@ public class vuforiaConcept extends LinearOpMode {
      * {@link #vuforia} is the variable we will use to store our instance of the Vuforia
      * localization engine.
      */
+
     VuforiaLocalizer vuforia;
 
-    @Override public void runOpMode() {
+    @Override public void runOpMode()
+    {
+        robotDrive.init(hardwareMap);
+
         /**
          * Start up Vuforia, telling it the id of the view that we wish to use as the parent for
          * the camera monitor feedback; if no camera monitor feedback is desired, use the parameterless
@@ -122,6 +128,7 @@ public class vuforiaConcept extends LinearOpMode {
          * and paste it in to your code as the value of the 'vuforiaLicenseKey' field of the
          * {@link Parameters} instance with which you initialize Vuforia.
          */
+
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters(R.id.cameraMonitorViewId);
         parameters.vuforiaLicenseKey = "AWmM31n/////AAAAGQGLpAwyxEQRgx0+yduk09BKNJJgdFC4Ti1nfZAP8PSlO1C3uNWOPW/0eQefL19+S2VeUjx7Z3ZQGmYYLkqQfRiG2SB//RpH7+NIYK1TEkGG9pyiqYrlY4FJvkOOQ/bRdJSw7CjpRKaRqVUznO1srjlbu5HU3bDpgEYSzKJxmKHmcPMwAT5fmGFJHRw/KmMSmb4i9JpCd5nN9+rFTqRl2bFMnxjLqzCfwV+Dv8fiiZumZMLNEsvpi8fyAV1wRwz5vq44r595p28zsuA97E19hqe+KBlxOdomtIkZM9ThnUkaQZiH53WkuagKRigvRnhRBP4lX5W92nue5qfBp0Fnt5DEuW0oj6YEho4ulCK92sOu";
         parameters.cameraDirection = VuforiaLocalizer.CameraDirection.BACK;
@@ -135,21 +142,24 @@ public class vuforiaConcept extends LinearOpMode {
          * example "StonesAndChips", datasets can be found in in this project in the
          * documentation directory.
          */
+
         VuforiaTrackables beacons = this.vuforia.loadTrackablesFromAsset("FTC_2016-17");
 
-        VuforiaTrackable wheels = beacons.get(0);
-        wheels.setName("wheels");  // wheels
+        VuforiaTrackable blueTarget1 = beacons.get(0);
+        blueTarget1.setName("wheels");  // wheels
 
-        VuforiaTrackable tools  = beacons.get(1);
-        tools.setName("tools");  // tools
+        VuforiaTrackable blueTarget2  = beacons.get(2);
+        blueTarget2.setName("legos");  // legos
 
-        VuforiaTrackable legos  = beacons.get(2);
-        legos.setName("legos");  // legos
+        VuforiaTrackable redTarget1 = beacons.get(3);
+        redTarget1.setName("gears");  // gears
 
-        VuforiaTrackable gears  = beacons.get(3);
-        gears.setName("gears");  // gears
+        VuforiaTrackable redTarget2  = beacons.get(1);
+        redTarget2.setName("tools");  // tools
+
 
         /** For convenience, gather together all the trackable objects in one easily-iterable collection */
+
         List<VuforiaTrackable> allTrackables = new ArrayList<VuforiaTrackable>();
         allTrackables.addAll(beacons);
 
@@ -160,9 +170,10 @@ public class vuforiaConcept extends LinearOpMode {
          * You don't *have to* use mm here, but the units here and the units used in the XML
          * target configuration files *must* correspond for the math to work out correctly.
          */
+
         float mmPerInch        = 25.4f;
         float mmBotWidth       = 18 * mmPerInch;            // ... or whatever is right for your robot
-        float mmFTCFieldWidth  = (12*12 - 2) * mmPerInch;   // the FTC field is ~11'10" center-to-center of the glass panels
+        float mmFTCFieldWidth  = (12*12 - 3 ) * mmPerInch;   // the FTC field is ~11'10" center-to-center of the glass panels
 
         /**
          * In order for localization to work, we need to tell the system where each target we
@@ -220,32 +231,57 @@ public class vuforiaConcept extends LinearOpMode {
          * - Then we rotate it  90 around the field's Z access to face it away from the audience.
          * - Finally, we translate it back along the X axis towards the red audience wall.
          */
-        OpenGLMatrix wheelsLocation = OpenGLMatrix
-                /* Then we translate the target off to the RED WALL. Our translation here
+
+        OpenGLMatrix blueTarget1LocationOnField = OpenGLMatrix
+                /* Then we translate the target off to the Blue WALL. Our translation here
                 is a negative translation in X.*/
-                .translation((-mmFTCFieldWidth/6)*3, 0, 0)
+                .translation(((mmFTCFieldWidth/2)-((mmFTCFieldWidth/12)*5)),mmFTCFieldWidth/2, ((17/2)+(mmPerInch*(3/2))))
                 .multiplied(Orientation.getRotationMatrix(
                         /* First, in the fixed (field) coordinate system, we rotate 90deg in X, then 90 in Z */
                         AxesReference.EXTRINSIC, AxesOrder.XZX,
-                        AngleUnit.DEGREES, 90, 90, 0));
-       // redTarget.setLocation(redTargetLocationOnField);
-      //  RobotLog.ii(TAG, "Red Target=%s", format(redTargetLocationOnField));
+                        AngleUnit.DEGREES, 90,0, 0));
+        blueTarget1.setLocation(blueTarget1LocationOnField);
+        RobotLog.ii(TAG, "wheels =%s", format(blueTarget1LocationOnField));
 
        /*
         * To place the Stones Target on the Blue Audience wall:
         * - First we rotate it 90 around the field's X axis to flip it upright
         * - Finally, we translate it along the Y axis towards the blue audience wall.
         */
-        OpenGLMatrix blueTargetLocationOnField = OpenGLMatrix
+
+        OpenGLMatrix blueTarget2LocationOnField = OpenGLMatrix
                 /* Then we translate the target off to the Blue Audience wall.
                 Our translation here is a positive translation in Y.*/
-                .translation(0, mmFTCFieldWidth/2, 0)
+                .translation(((-mmFTCFieldWidth/2)+((mmFTCFieldWidth/12)*3)), mmFTCFieldWidth/2, ((17/2)+(mmPerInch*(3/2))))
                 .multiplied(Orientation.getRotationMatrix(
                         /* First, in the fixed (field) coordinate system, we rotate 90deg in X */
                         AxesReference.EXTRINSIC, AxesOrder.XZX,
                         AngleUnit.DEGREES, 90, 0, 0));
-    //    blueTarget.setLocation(blueTargetLocationOnField);
-        RobotLog.ii(TAG, "Blue Target=%s", format(blueTargetLocationOnField));
+        blueTarget2.setLocation(blueTarget2LocationOnField);
+        RobotLog.ii(TAG, "legos =%s", format(blueTarget2LocationOnField));
+
+
+        OpenGLMatrix redTarget1LocationOnField = OpenGLMatrix
+                /* Then we translate the target off to the Blue Audience wall.
+                Our translation here is a positive translation in Y.*/
+                .translation((-mmFTCFieldWidth/2), ((-mmFTCFieldWidth/2)+((mmFTCFieldWidth/12)*5)), ((17/2)+(mmPerInch*(3/2))))
+                .multiplied(Orientation.getRotationMatrix(
+                        /* First, in the fixed (field) coordinate system, we rotate 90deg in X */
+                        AxesReference.EXTRINSIC, AxesOrder.XZX,
+                        AngleUnit.DEGREES, 90, 90, 0));
+        redTarget1.setLocation(redTarget1LocationOnField);
+        RobotLog.ii(TAG, "gears =%s", format(redTarget1LocationOnField));
+
+        OpenGLMatrix redTarget2LocationOnField = OpenGLMatrix
+                /* Then we translate the target off to the Blue Audience wall.
+                Our translation here is a positive translation in Y.*/
+                .translation((-mmFTCFieldWidth/2), ((mmFTCFieldWidth/2)-((mmFTCFieldWidth/12)*3)), ((17/2)+(mmPerInch*(3/2))))
+                .multiplied(Orientation.getRotationMatrix(
+                        /* First, in the fixed (field) coordinate system, we rotate 90deg in X */
+                        AxesReference.EXTRINSIC, AxesOrder.XZX,
+                        AngleUnit.DEGREES, 90, 0, 0));
+        redTarget2.setLocation(redTarget2LocationOnField);
+        RobotLog.ii(TAG, "tools =%s", format(redTarget2LocationOnField));
 
         /**
          * Create a transformation matrix describing where the phone is on the robot. Here, we
@@ -259,6 +295,7 @@ public class vuforiaConcept extends LinearOpMode {
          * axis towards the origin. A positive rotation about Z (ie: a rotation parallel to the the X-Y
          * plane) is then CCW, as one would normally expect from the usual classic 2D geometry.
          */
+
         OpenGLMatrix phoneLocationOnRobot = OpenGLMatrix
                 .translation(mmBotWidth/2,0,0)
                 .multiplied(Orientation.getRotationMatrix(
@@ -271,8 +308,11 @@ public class vuforiaConcept extends LinearOpMode {
          * listener is a {@link VuforiaTrackableDefaultListener} and can so safely cast because
          * we have not ourselves installed a listener of a different type.
          */
-       // ((VuforiaTrackableDefaultListener)redTarget.getListener()).setPhoneInformation(phoneLocationOnRobot, parameters.cameraDirection);
-       // ((VuforiaTrackableDefaultListener)blueTarget.getListener()).setPhoneInformation(phoneLocationOnRobot, parameters.cameraDirection);
+
+        ((VuforiaTrackableDefaultListener)blueTarget1.getListener()).setPhoneInformation(phoneLocationOnRobot, parameters.cameraDirection);
+        ((VuforiaTrackableDefaultListener)blueTarget2.getListener()).setPhoneInformation(phoneLocationOnRobot, parameters.cameraDirection);
+        ((VuforiaTrackableDefaultListener)redTarget1.getListener()).setPhoneInformation(phoneLocationOnRobot, parameters.cameraDirection);
+        ((VuforiaTrackableDefaultListener)redTarget2.getListener()).setPhoneInformation(phoneLocationOnRobot, parameters.cameraDirection);
 
         /**
          * A brief tutorial: here's how all the math is going to work:
@@ -296,14 +336,22 @@ public class vuforiaConcept extends LinearOpMode {
         /** Wait for the game to begin */
         telemetry.addData(">", "Press Play to start tracking");
         telemetry.update();
+
+
         waitForStart();
 
         /** Start tracking the data sets we care about. */
-     //   stonesAndChips.activate();
+        beacons.activate();
 
-        while (opModeIsActive()) {
+        while (opModeIsActive())
+        {
 
-            for (VuforiaTrackable trackable : allTrackables) {
+            float robotX = 0;
+            float robotY = 0;
+            float robotAng = 0;
+
+            for (VuforiaTrackable trackable : allTrackables)
+            {
                 /**
                  * getUpdatedRobotLocation() will return null if no new information is available since
                  * the last time that call was made, or if the trackable is not currently visible.
@@ -312,20 +360,43 @@ public class vuforiaConcept extends LinearOpMode {
                 telemetry.addData(trackable.getName(), ((VuforiaTrackableDefaultListener)trackable.getListener()).isVisible() ? "Visible" : "Not Visible");    //
 
                 OpenGLMatrix robotLocationTransform = ((VuforiaTrackableDefaultListener)trackable.getListener()).getUpdatedRobotLocation();
-                if (robotLocationTransform != null) {
+                if (robotLocationTransform != null)
+                {
                     lastLocation = robotLocationTransform;
+                    float[] coordinates = lastLocation.getTranslation().getData();
+                    robotX = coordinates[0];
+                    robotY = coordinates[1];
+                    robotAng = Orientation.getOrientation(lastLocation,AxesReference.EXTRINSIC,AxesOrder.XYZ,AngleUnit.DEGREES).thirdAngle;
                 }
             }
+
             /**
              * Provide feedback as to where the robot was last located (if we know).
              */
-            if (lastLocation != null) {
+
+            if (lastLocation != null)
+            {
                 //  RobotLog.vv(TAG, "robot=%s", format(lastLocation));
                 telemetry.addData("Pos", format(lastLocation));
-            } else {
+            } else
+            {
                 telemetry.addData("Pos", "Unknown");
             }
             telemetry.update();
+
+
+            if(lastLocation == null)
+            {
+                //dirve forward
+            }
+
+            if(((VuforiaTrackableDefaultListener) blueTarget1.getListener()).isVisible())
+            {
+            int target = 0 ;
+            }
+
+
+
         }
     }
 
@@ -333,7 +404,147 @@ public class vuforiaConcept extends LinearOpMode {
      * A simple utility that extracts positioning information from a transformation matrix
      * and formats it in a form palatable to a human being.
      */
-    String format(OpenGLMatrix transformationMatrix) {
+    String format(OpenGLMatrix transformationMatrix)
+    {
         return transformationMatrix.formatAsTransform();
     }
+
+    void DriveForward(int target,float power)
+    {
+        robotDrive.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.backRightMotor.setTargetPosition(target);
+        robotDrive.backRightMotor.setPower(power);
+
+        robotDrive.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.backLeftMotor.setTargetPosition(target);
+        robotDrive.backLeftMotor.setPower(power);
+
+        robotDrive.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.frontRightMotor.setTargetPosition(target);
+        robotDrive.frontRightMotor.setPower(power);
+
+        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.frontLeftMotor.setTargetPosition(target);
+        robotDrive.frontLeftMotor.setPower(power);
+    }
+
+    void Drivebackwards(int target,float power)
+    {
+        robotDrive.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.backRightMotor.setTargetPosition(target);
+        robotDrive.backRightMotor.setPower(power);
+
+        robotDrive.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.backLeftMotor.setTargetPosition(target);
+        robotDrive.backLeftMotor.setPower(power);
+
+        robotDrive.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.frontRightMotor.setTargetPosition(target);
+        robotDrive.frontRightMotor.setPower(power);
+
+        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.frontLeftMotor.setTargetPosition(target);
+        robotDrive.frontLeftMotor.setPower(power);
+    }
+
+    void slipright(int target,float power)
+    {
+        robotDrive.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.backRightMotor.setTargetPosition(target);
+        robotDrive.backRightMotor.setPower(power);
+
+        robotDrive.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.backLeftMotor.setTargetPosition(target);
+        robotDrive.backLeftMotor.setPower(-power);
+
+        robotDrive.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.frontRightMotor.setTargetPosition(target);
+        robotDrive.frontRightMotor.setPower(-power);
+
+        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.frontLeftMotor.setTargetPosition(target);
+        robotDrive.frontLeftMotor.setPower(power);
+    }
+
+    void slipleft(int target,float power)
+    {
+        robotDrive.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.backRightMotor.setTargetPosition(target);
+        robotDrive.backRightMotor.setPower(-power);
+
+        robotDrive.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.backLeftMotor.setTargetPosition(target);
+        robotDrive.backLeftMotor.setPower(power);
+
+        robotDrive.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.frontRightMotor.setTargetPosition(target);
+        robotDrive.frontRightMotor.setPower(power);
+
+        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.frontLeftMotor.setTargetPosition(target);
+        robotDrive.frontLeftMotor.setPower(-power);
+    }
+
+    void turnright(int target,float power)
+    {
+        robotDrive.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.backRightMotor.setTargetPosition(target);
+        robotDrive.backRightMotor.setPower(-power);
+
+        robotDrive.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.backLeftMotor.setTargetPosition(target);
+        robotDrive.backLeftMotor.setPower(power);
+
+        robotDrive.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.frontRightMotor.setTargetPosition(target);
+        robotDrive.frontRightMotor.setPower(-power);
+
+        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.frontLeftMotor.setTargetPosition(target);
+        robotDrive.frontLeftMotor.setPower(power);
+    }
+
+    void turnleft(int target,float power)
+    {
+        robotDrive.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.backRightMotor.setTargetPosition(target);
+        robotDrive.backRightMotor.setPower(power);
+
+        robotDrive.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.backLeftMotor.setTargetPosition(target);
+        robotDrive.backLeftMotor.setPower(-power);
+
+        robotDrive.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.frontRightMotor.setTargetPosition(target);
+        robotDrive.frontRightMotor.setPower(power);
+
+        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robotDrive.frontLeftMotor.setTargetPosition(target);
+        robotDrive.frontLeftMotor.setPower(-power);
+    }
+
 }

@@ -1,7 +1,8 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
@@ -14,38 +15,53 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Motor channel:  Back Left Motor:        "bl"
  *
  */
-public class HardwareServo
+public class HardwareOmniWheelsForAuton
 {
     /* Public OpMode members. */
-    public Servo SL = null;
-    public Servo SR = null;
 
-    public double Arm_Max = .3;
-    public double Arm_Min = 1.0;
-
+    public DcMotor  frontRightMotor   = null;
+    public DcMotor  backRightMotor  = null;
+    public DcMotor  frontLeftMotor    = null;
+    public DcMotor  backLeftMotor    = null;
 
     /* local OpMode members. */
     HardwareMap hwMap           =  null;
     private ElapsedTime period  = new ElapsedTime();
 
     /* Constructor */
-    public HardwareServo()
+    public HardwareOmniWheelsForAuton()
     {
+
     }
 
     /* Initialize standard Hardware interfaces */
     public void init(HardwareMap ahwMap)
     {
-
         // Save reference to Hardware map
         hwMap = ahwMap;
 
         // Define and Initialize Motors
-        SL = hwMap.servo.get("sl");
-        SR = hwMap.servo.get("sr");
+        frontRightMotor   = hwMap.dcMotor.get("fr");
+        backRightMotor  = hwMap.dcMotor.get("br");
+        frontLeftMotor   = hwMap.dcMotor.get("fl");
+        backLeftMotor  = hwMap.dcMotor.get("bl");
 
-        SL.setPosition(0.9 );
-        SR.setPosition(0.0);
+        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to REVERSE to normalize movement
+        backRightMotor.setDirection(DcMotor.Direction.REVERSE);// Set to REVERSE to normalize movement
+        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);
+
+        // Set all motors to zero power
+        frontRightMotor.setPower(0.0);
+        backRightMotor.setPower(0.0);
+        frontLeftMotor.setPower(0.0);
+        backLeftMotor.setPower(0.0);
+
+        // Set all motors to run without encoders.
+        frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     /***
@@ -57,6 +73,7 @@ public class HardwareServo
      * @param periodMs  Length of wait cycle in mSec.
      * @throws InterruptedException
      */
+
     public void waitForTick(long periodMs) throws InterruptedException
     {
 
@@ -64,7 +81,9 @@ public class HardwareServo
 
         // sleep for the remaining portion of the regular cycle period.
         if (remaining > 0)
+        {
             Thread.sleep(remaining);
+        }
 
         // Reset the cycle clock for the next pass.
         period.reset();

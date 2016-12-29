@@ -78,22 +78,18 @@ public class Autonomo extends LinearOpMode
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
-        DriveForwardTime(DRIVE_POWER, 1000);
-        TurnLeftTime(DRIVE_POWER,1000);
-        DriveForwardTime(DRIVE_POWER, 1000);
-        TurnRightTime(DRIVE_POWER, 1000);
-        DriveForwardTime(DRIVE_POWER, 1000);
+        DriveForwardTime(DRIVE_POWER, 1700);
         StopDriving();
 
     }
-    double DRIVE_POWER = 1.0;
+    double DRIVE_POWER = .7;
 
     public void DriveForward (double power)
     {
-        robotDrive.frontLeftMotor.setPower(power);
-        robotDrive.frontRightMotor.setPower(power);
-        robotDrive.backLeftMotor.setPower(power);
-        robotDrive.backRightMotor.setPower(power);
+        robotDrive.frontLeftMotor.setPower(-power);
+        robotDrive.frontRightMotor.setPower(-power);
+        robotDrive.backLeftMotor.setPower(-power);
+        robotDrive.backRightMotor.setPower(-power);
     }
     public void TurnRight (double power)
     {
@@ -128,6 +124,9 @@ public class Autonomo extends LinearOpMode
     {
         TurnLeft(power);
         Thread.sleep(time);
+    }
+    public void Dispara (double power){
+        disparador.disparadorMotor.setPower(power);
     }
 
 }
