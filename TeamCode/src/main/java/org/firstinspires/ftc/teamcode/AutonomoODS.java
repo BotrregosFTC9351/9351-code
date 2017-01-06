@@ -55,20 +55,19 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 public class AutonomoODS extends LinearOpMode {
     /* Declare OpMode members. */
     HardwareOmniWheels robotDrive           = new HardwareOmniWheels();   // Use a Omni Drive Train's hardware
-    OpticalDistanceSensor opticalDistanceSensor;
+    HardwareSensores sensores = new HardwareSensores();
 
     @Override
     public void runOpMode() throws InterruptedException
     {
-        opticalDistanceSensor = hardwareMap.opticalDistanceSensor.get("ODS");
-        double reflectance = opticalDistanceSensor.getLightDetected();
+        robotDrive.init(hardwareMap);
+        sensores.init(hardwareMap);
         waitForStart();
-        while(opticalDistanceSensor.getLightDetected() < 0.0189) { //value continuously checked
+        while(sensores.odsSensor.getLightDetected() < 0.0189) { //value continuously checked
             DriveForward(0.2);
         }
         StopDriving(); //Only happens after robot detects white line
     }
-    double DRIVE_POWER = 1.0;
 
     public void DriveForward (double power)
     {
@@ -95,8 +94,6 @@ public class AutonomoODS extends LinearOpMode {
     {
         DriveForward(0);
     }
-
-
 
 }
 
