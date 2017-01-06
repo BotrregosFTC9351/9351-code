@@ -35,6 +35,7 @@ import android.app.Activity;
 import android.view.View;
 
 import com.qualcomm.hardware.hitechnic.HiTechnicNxtGyroSensor;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -52,7 +53,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-  public class HardwareSensores {
+
+
+@Disabled
+public class HardwareSensores {
   public OpticalDistanceSensor odsSensor;  // Hardware Device Object
   public ColorSensor colorSensor;  // Hardware Device Object
   public LightSensor lightSensor;  // Hardware Device Object

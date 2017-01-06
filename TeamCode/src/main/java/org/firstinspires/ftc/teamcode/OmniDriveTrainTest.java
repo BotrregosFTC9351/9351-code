@@ -81,6 +81,7 @@ public class OmniDriveTrainTest extends LinearOpMode
         double position = 0.0;
         double positionSR = 0.0;
         double positionSL = 0.0;
+        double positionSA = 0.0;
 
         // Send telemetry message to signify robot waiting;
 
@@ -177,17 +178,24 @@ public class OmniDriveTrainTest extends LinearOpMode
             {
                 positionSL = .9;
                 positionSR = .1;
+                positionSA = .9;
+                servo.SL.setPosition(positionSL);
+                servo.SR.setPosition(positionSR);
+                servo.SA.setPosition(positionSA);
             }
             else if (gamepad2.left_bumper)
             {
                 positionSL = .1;
                 positionSR = .9;
+                positionSA = .1;
+                servo.SL.setPosition(positionSL);
+                servo.SR.setPosition(positionSR);
+                servo.SA.setPosition(positionSA);
             }
 
             telemetry.addData("servoR: ", positionSR) ;
             telemetry.addData("servoL: ", positionSL) ;
-            servo.SL.setPosition(positionSL);
-            servo.SR.setPosition(positionSR);
+            telemetry.addData("servoA: ", positionSA) ;
             //  Sets the turbo mode for the motors to normal when the right bumper is not pressed
             //  or to max speed (turbo) when it is pressed
 

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -54,10 +55,10 @@ public class HardwareOmniWheels
         frontLeftMotor   = hwMap.dcMotor.get("fl");
         backLeftMotor  = hwMap.dcMotor.get("bl");
 
-        frontRightMotor.setDirection(DcMotor.Direction.FORWARD);
-        backRightMotor.setDirection(DcMotor.Direction.FORWARD);
-        frontLeftMotor.setDirection(DcMotor.Direction.REVERSE);// Set to REVERSE to normalize movement
-        backLeftMotor.setDirection(DcMotor.Direction.REVERSE);// Set to REVERSE to normalize movement
+        frontRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        backRightMotor.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftMotor.setDirection(DcMotor.Direction.FORWARD);// Set to REVERSE to normalize movement
+        backLeftMotor.setDirection(DcMotor.Direction.FORWARD);// Set to REVERSE to normalize movement
 
         // Set all motors to zero power
         frontRightMotor.setPower(0.0);

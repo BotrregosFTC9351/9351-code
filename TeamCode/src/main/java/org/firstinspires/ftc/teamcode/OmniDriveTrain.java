@@ -57,7 +57,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  */
 
 @TeleOp(name="OmniDriveTrain")
-//@Disabled
+@Disabled
 public class OmniDriveTrain extends LinearOpMode
 {
 
