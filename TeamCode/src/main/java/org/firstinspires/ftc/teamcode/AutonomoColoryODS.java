@@ -37,10 +37,12 @@ import android.view.View;
 
 import com.qualcomm.ftcrobotcontroller.R;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.DigitalChannelController;
+import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
 
 /*
  *
@@ -69,9 +71,11 @@ import com.qualcomm.robotcore.hardware.DigitalChannelController;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
-@Autonomous(name = "AutonomoColorRGBAda")
+@Autonomous(name = "AutonomoColoryODS")
 public class AutonomoColoryODS extends LinearOpMode {
 
+  HardwareOmniWheels robotDrive           = new HardwareOmniWheels();   // Use a Omni Drive Train's hardware
+  OpticalDistanceSensor ods;
   ColorSensor sensorRGB;
   DeviceInterfaceModule cdim;
 
@@ -83,7 +87,7 @@ public class AutonomoColoryODS extends LinearOpMode {
   public void runOpMode() {
 
     // hsvValues is an array that will hold the hue, saturation, and value information.
-    float hsvValues[] = {0F,0F,0F};
+    float hsvValues[] = {0F, 0F, 0F};
 
     // values is a reference to the hsvValues array.
     final float values[] = hsvValues;
@@ -113,18 +117,21 @@ public class AutonomoColoryODS extends LinearOpMode {
     // turn the LED on in the beginning, just so user will know that the sensor is active.
     cdim.setDigitalChannelState(LED_CHANNEL, bLedOn);
 
+    robotDrive.init(hardwareMap);
+    ods = hardwareMap.opticalDistanceSensor.get("ods");
+
     // wait for the start button to be pressed.
     waitForStart();
 
     // loop and read the RGB data.
     // Note we use opModeIsActive() as our loop condition because it is an interruptible method.
-    while (opModeIsActive())  {
+    while (opModeIsActive()) {
 
       // check the status of the x button on gamepad.
       bCurrState = gamepad1.x;
 
       // check for button-press state transitions.
-      if ((bCurrState == true) && (bCurrState != bPrevState))  {
+      if ((bCurrState == true) && (bCurrState != bPrevState)) {
 
         // button is transitioning to a pressed state. Toggle the LED.
         bLedOn = !bLedOn;
@@ -156,9 +163,90 @@ public class AutonomoColoryODS extends LinearOpMode {
 
       telemetry.update();
 
-      //if (sensorRGB.red()= ){
-
+      while (ods.getLightDetected() < .2 && ods.getLightDetected() < .5) { //value continuously checked
+        DriveForward(.2);
+      }
+      StopDriving();
+      sleep(1000);
+      if (hsvValues[0] > 187 && hsvValues[0] < 230) {
+          TurnLeft(.2);
+          sleep(2000);
+          DriveBackward(.2);
+          sleep(2000);
+      } else {
+          DriveForward(.2);
+          sleep(2000);
+          TurnLeft(.2);
+          sleep(2000);
+          DriveBackward(.2);
+          sleep(2000);
+      }
+        SlideRight(.2);
+        sleep(1000);
+        while (ods.getLightDetected() < .2 && ods.getLightDetected() < .5) { //value continuously checked
+            SlideRight(.2);
+        }
+        StopDriving();
+        sleep(1000);
+        if (hsvValues[0] > 187 && hsvValues[0] < 230) {
+            TurnLeft(.2);
+            sleep(2000);
+            DriveBackward(.2);
+            sleep(2000);
+        } else {
+            DriveForward(.2);
+            sleep(2000);
+            TurnLeft(.2);
+            sleep(2000);
+            DriveBackward(.2);
+            sleep(2000);
+        }
       }
     }
+  public void DriveForward (double power)
+  {
+    robotDrive.frontLeftMotor.setPower(power);
+    robotDrive.frontRightMotor.setPower(power);
+    robotDrive.backLeftMotor.setPower(power);
+    robotDrive.backRightMotor.setPower(power);
   }
-
+  public void TurnRight (double power)
+  {
+    robotDrive.frontLeftMotor.setPower(power);
+    robotDrive.frontRightMotor.setPower(-power);
+    robotDrive.backLeftMotor.setPower(power);
+    robotDrive.backRightMotor.setPower(-power);
+  }
+  public void TurnLeft (double power)
+  {
+    robotDrive.frontLeftMotor.setPower(-power);
+    robotDrive.frontRightMotor.setPower(power);
+    robotDrive.backLeftMotor.setPower(-power);
+    robotDrive.backRightMotor.setPower(power);
+  }
+  public void DriveBackward (double power)
+  {
+    robotDrive.frontLeftMotor.setPower(-power);
+    robotDrive.frontRightMotor.setPower(-power);
+    robotDrive.backLeftMotor.setPower(-power);
+    robotDrive.backRightMotor.setPower(-power);
+  }
+  public void SlideRight (double power)
+  {
+    robotDrive.frontLeftMotor.setPower(power);
+    robotDrive.frontRightMotor.setPower(-power);
+    robotDrive.backLeftMotor.setPower(-power);
+    robotDrive.backRightMotor.setPower(power);
+  }
+  public void SlideLeft (double power)
+  {
+    robotDrive.frontLeftMotor.setPower(-power);
+    robotDrive.frontRightMotor.setPower(power);
+    robotDrive.backLeftMotor.setPower(power);
+    robotDrive.backRightMotor.setPower(-power);
+  }
+  public void StopDriving ()
+  {
+    DriveForward(0);
+  }
+}
