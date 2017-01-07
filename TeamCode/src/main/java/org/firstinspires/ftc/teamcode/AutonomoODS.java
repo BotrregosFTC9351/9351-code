@@ -60,19 +60,22 @@ public class AutonomoODS extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException
     {
+        // Declares variables used on the program
+        /* Initialize the hardware variables.
+         * The init() method of the hardware class does all the work here
+         */
         robotDrive.init(hardwareMap);
         ods = hardwareMap.opticalDistanceSensor.get("ods");
+
         waitForStart();
 
-        telemetry.addData("Light Detected", ods.getLightDetected());
-        telemetry.update();
-
-        while(ods.getLightDetected() < 0.0189) { //value continuously checked
-            telemetry.addData("Light Detected", ods.getLightDetected());
-            telemetry.update();
-            DriveForward(0.2);
-        } StopDriving(); //Only happens after robot detects white line
+        while(ods.getLightDetected() < .2 && ods.getLightDetected() < .5) { //value continuously checked
+            DriveForward(.5);
+        }
+        StopDriving();
+        sleep(1000);
     }
+
 
     public void DriveForward (double power)
     {
@@ -99,6 +102,5 @@ public class AutonomoODS extends LinearOpMode {
     {
         DriveForward(0);
     }
-
 }
 
