@@ -86,6 +86,7 @@ import java.util.List;
  */
 
 @TeleOp(name="saul Vuforia Navigation", group ="Concept")
+@Disabled
 
 public class SaulVuforiaNavigation extends LinearOpMode {
 
