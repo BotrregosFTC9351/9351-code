@@ -33,7 +33,7 @@ public class    HardwareDisparador
 
         // Define and Initialize Motors
         disparadorMotor = hwMap.dcMotor.get("disp");
-        disparadorMotor.setDirection(DcMotor.Direction.REVERSE);
+        disparadorMotor.setDirection(DcMotor.Direction.FORWARD);
         disparadorMotor.setPower(0);
         disparadorMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
