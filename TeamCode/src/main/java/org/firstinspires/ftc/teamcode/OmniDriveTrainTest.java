@@ -208,9 +208,9 @@ public class OmniDriveTrainTest extends LinearOpMode
 
             else
             {
-                robotDrive.turbo = .5;
+                robotDrive.turbo = 1;
 
-                turbo = .5;
+                turbo = 1;
             }
 
             telemetry.addData("velocidad", turbo);

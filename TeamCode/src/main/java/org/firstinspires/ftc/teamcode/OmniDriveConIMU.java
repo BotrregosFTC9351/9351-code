@@ -122,7 +122,7 @@ public class OmniDriveConIMU extends LinearOpMode
         imu.initialize(parameters);
 
         // Set up our telemetry dashboard
-        composeTelemetry();
+        composeTelemetry2();
 
         // Wait until we're told to go
         waitForStart();
@@ -329,6 +329,23 @@ public class OmniDriveConIMU extends LinearOpMode
             robotDrive.waitForTick(40);
 
         }
+    }
+    void composeTelemetry2() {
+
+        // At the beginning of each telemetry update, grab a bunch of data
+        // from the IMU that we will then display in separate lines.
+        telemetry.addAction(new Runnable() { @Override public void run()
+        {
+            // Acquiring the angles is relatively expensive; we don't want
+            // to do that in each of the three items that need that info, as that's
+            // three times the necessary expense.
+            angles   = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
+            gravity  = imu.getGravity();
+        }
+        });
+
+        telemetry.addLine()
+                .addData("heading", angles);
     }
     void composeTelemetry() {
 

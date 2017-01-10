@@ -61,6 +61,8 @@ import java.util.Locale;
 @Autonomous(name = "AutonomoIMU", group = "Sensor")
 public class AutonomoIMU extends LinearOpMode
     {
+
+    HardwareOmniWheels robotDrive           = new HardwareOmniWheels();   // Use a Omni Drive Train's hardware
     //----------------------------------------------------------------------------------------------
     // State
     //----------------------------------------------------------------------------------------------
@@ -76,7 +78,10 @@ public class AutonomoIMU extends LinearOpMode
     // Main logic
     //----------------------------------------------------------------------------------------------
 
-    @Override public void runOpMode() {
+    @Override public void runOpMode() throws InterruptedException
+    {
+
+        robotDrive.init(hardwareMap);
 
         // Set up the parameters with which we will use our IMU. Note that integration
         // algorithm here just reports accelerations to the logcat log; it doesn't actually
@@ -89,32 +94,71 @@ public class AutonomoIMU extends LinearOpMode
         parameters.loggingTag          = "IMU";
         parameters.accelerationIntegrationAlgorithm = new JustLoggingAccelerationIntegrator();
 
+        angles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
+
         // Retrieve and initialize the IMU. We expect the IMU to be attached to an I2C port
         // on a Core Device Interface Module, configured to be a sensor of type "AdaFruit IMU",
         // and named "imu".
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         imu.initialize(parameters);
 
+        boolean i = true;
         // Set up our telemetry dashboard
-        composeTelemetry();
-
         // Wait until we're told to go
         waitForStart();
 
         // Start the logging of measured acceleration
-        imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
-
-        // Loop and update the dashboard
-        while (opModeIsActive()) {
-            telemetry.update();
+        if (angles.firstAngle < 90){
+        TurnRight(.1);
+            sleep (1000);
+        while (angles.firstAngle < 90) { //imu.getAngularOrientation().firstAngle
+            angles = imu.getAngularOrientation().toAxesReference(AxesReference.INTRINSIC).toAxesOrder(AxesOrder.ZYX);
         }
     }
+    }
+        
+
+        //while (true ) {
+          //  imu.startAccelerationIntegration(new Position(), new Velocity(), 1000);
+            //if (angles.firstAngle == 25.9) {
+              //  DriveForward(.2);
+            //} else if (angles.firstAngle < 25.9) {
+              //  TurnLeft(.2);
+            //} else if (angles.firstAngle > 25.9) {
+              //  TurnRight(.2);
+            //}
+        //}}
 
     //----------------------------------------------------------------------------------------------
     // Telemetry Configuration
     //----------------------------------------------------------------------------------------------
+    public void DriveForward (double power)
+    {
+        robotDrive.frontLeftMotor.setPower(power);
+        robotDrive.frontRightMotor.setPower(power);
+        robotDrive.backLeftMotor.setPower(power);
+        robotDrive.backRightMotor.setPower(power);
+    }
+        public void TurnRight (double power)
+        {
+            robotDrive.frontLeftMotor.setPower(power);
+            robotDrive.frontRightMotor.setPower(-power);
+            robotDrive.backLeftMotor.setPower(power);
+            robotDrive.backRightMotor.setPower(-power);
+        }
+        public void TurnLeft (double power)
+        {
+            robotDrive.frontLeftMotor.setPower(-power);
+            robotDrive.frontRightMotor.setPower(power);
+            robotDrive.backLeftMotor.setPower(-power);
+            robotDrive.backRightMotor.setPower(power);
+        }
+        public void StopDriving ()
+        {
+            DriveForward(0);
+        }
 
-    void composeTelemetry() {
+        void composeTelemetry() {
 
         // At the beginning of each telemetry update, grab a bunch of data
         // from the IMU that we will then display in separate lines.
@@ -129,48 +173,7 @@ public class AutonomoIMU extends LinearOpMode
             });
 
         telemetry.addLine()
-            .addData("status", new Func<String>() {
-                @Override public String value() {
-                    return imu.getSystemStatus().toShortString();
-                    }
-                })
-            .addData("calib", new Func<String>() {
-                @Override public String value() {
-                    return imu.getCalibrationStatus().toString();
-                    }
-                });
-
-        telemetry.addLine()
-            .addData("heading", new Func<String>() {
-                @Override public String value() {
-                    return formatAngle(angles.angleUnit, angles.firstAngle);
-                    }
-                })
-            .addData("roll", new Func<String>() {
-                @Override public String value() {
-                    return formatAngle(angles.angleUnit, angles.secondAngle);
-                    }
-                })
-            .addData("pitch", new Func<String>() {
-                @Override public String value() {
-                    return formatAngle(angles.angleUnit, angles.thirdAngle);
-                    }
-                });
-
-        telemetry.addLine()
-            .addData("grvty", new Func<String>() {
-                @Override public String value() {
-                    return gravity.toString();
-                    }
-                })
-            .addData("mag", new Func<String>() {
-                @Override public String value() {
-                    return String.format(Locale.getDefault(), "%.3f",
-                            Math.sqrt(gravity.xAccel*gravity.xAccel
-                                    + gravity.yAccel*gravity.yAccel
-                                    + gravity.zAccel*gravity.zAccel));
-                    }
-                });
+            .addData("heading", angles);
     }
 
     //----------------------------------------------------------------------------------------------
