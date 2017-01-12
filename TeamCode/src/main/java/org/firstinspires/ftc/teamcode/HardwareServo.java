@@ -19,7 +19,6 @@ public class HardwareServo
     /* Public OpMode members. */
     public Servo SL = null;
     public Servo SR = null;
-    public Servo SA = null;
 
     public double Arm_Max = .3;
     public double Arm_Min = 1.0;
@@ -44,11 +43,9 @@ public class HardwareServo
         // Define and Initialize Motors
         SL = hwMap.servo.get("sl");
         SR = hwMap.servo.get("sr");
-        SA = hwMap.servo.get("sa");
 
-        SL.setPosition(.9);
-        SR.setPosition(.9);
-        SA.setPosition(.1);
+        SL.setPosition(1.0);
+        SR.setPosition(1.0);
     }
 
     /***

@@ -34,6 +34,8 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 /**
  * This OpMode uses the common Pushbot hardware class to define the devices on the robot.
@@ -61,6 +63,17 @@ public class TeleOpOmniDriveTrain extends LinearOpMode
     HardwareDisparador disparador = new HardwareDisparador();
     HardwarePelotota pelotota = new HardwarePelotota();
 
+    private ElapsedTime runtime = new ElapsedTime();
+
+    static final double     COUNTS_PER_MOTOR_REVP    = 1440 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTIONP    = 2.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHESP   = 4.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCHP         = (COUNTS_PER_MOTOR_REVP * DRIVE_GEAR_REDUCTIONP) /
+            (WHEEL_DIAMETER_INCHESP * 3.1415);
+    static final double     DRIVE_SPEEDP             = 0.5;
+    static final double     TURN_SPEEDP              = 0.5;
+
+
 
     @Override
     public void runOpMode() throws InterruptedException
@@ -77,9 +90,8 @@ public class TeleOpOmniDriveTrain extends LinearOpMode
         pelotota.init(hardwareMap);
 
         double position = 0.0;
-        double positionSR = 0.0;
         double positionSL = 0.0;
-        double positionSA = 0.0;
+        double positionSR = 0.0;
 
         robotDrive.frontRightMotor.setPower(0.0);
         robotDrive.backRightMotor.setPower(0.0);
@@ -90,8 +102,14 @@ public class TeleOpOmniDriveTrain extends LinearOpMode
         telemetry.addData("here comes dat bot", "Oh hey, waddup");
         telemetry.update();
 
-        // Wait for the game to start (driver presses PLAY)
+        pelotota.PL.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        pelotota.PR.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        idle();
 
+        pelotota.PL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        pelotota.PR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         // run until the end of the match (driver presses STOP)
@@ -151,6 +169,10 @@ public class TeleOpOmniDriveTrain extends LinearOpMode
 
             }
 
+            if (gamepad2.a){
+                encoderDriveP(DRIVE_SPEEDP,  5,  5, 5.0);  // S1: Forward 47 Inches with 5 Sec timeout
+            }
+
 
             double banda_arriba = gamepad1.right_trigger;
             double banda_abajo = -gamepad1.left_trigger;
@@ -178,26 +200,21 @@ public class TeleOpOmniDriveTrain extends LinearOpMode
 
             if (gamepad2.right_bumper)
             {
-                positionSL = .9;
-                positionSR = .1;
-                positionSA = .9;
+                positionSL = .7;
+                positionSR= 1.0;
                 servo.SL.setPosition(positionSL);
                 servo.SR.setPosition(positionSR);
-                servo.SA.setPosition(positionSA);
             }
             else if (gamepad2.left_bumper)
             {
-                positionSL = .1;
-                positionSR = .9;
-                positionSA = .1;
+                positionSL = .0;
+                positionSR = 1.0;
                 servo.SL.setPosition(positionSL);
                 servo.SR.setPosition(positionSR);
-                servo.SA.setPosition(positionSA);
             }
 
-            telemetry.addData("servoR: ", positionSR) ;
             telemetry.addData("servoL: ", positionSL) ;
-            telemetry.addData("servoA: ", positionSA) ;
+            telemetry.addData("servoR: ", positionSR) ;
             //  Sets the turbo mode for the motors to normal when the right bumper is not pressed
             //  or to max speed (turbo) when it is pressed
 
@@ -237,10 +254,10 @@ public class TeleOpOmniDriveTrain extends LinearOpMode
             robotDrive.backRightPower = robotDrive.y1 - robotDrive.x2 + robotDrive.x1;
             robotDrive.frontLeftPower = robotDrive.y1 + robotDrive.x2 + robotDrive.x1;
             robotDrive.backLeftPower = robotDrive.y1 + robotDrive.x2 - robotDrive.x1;
-            double frontRightPower  = y1 - x2 - x1;
-            double backRightPower   = y1 - x2 + x1;
-            double frontLeftPower   = y1 + x2 + x1;
-            double backLeftPower    = y1 + x2 - x1;
+            double frontRightPower  = y1 + x2 - x1;
+            double backRightPower   = y1 + x2 + x1;
+            double frontLeftPower   = y1 - x2 + x1;
+            double backLeftPower    = y1 - x2 - x1;
 
             // Normalize the values so neither exceed +/- 1.0
 
@@ -293,6 +310,54 @@ public class TeleOpOmniDriveTrain extends LinearOpMode
 
             robotDrive.waitForTick(40);
 
+        }
+    }
+    public void encoderDriveP(double speedP,
+                             double leftInchesP, double rightInchesP,
+                             double timeoutSP) {
+        int newLeftTargetP;
+        int newRightTargetP;
+
+        // Ensure that the opmode is still active
+        if (opModeIsActive()) {
+
+            // Determine new target position, and pass to motor controller
+            newLeftTargetP = pelotota.PL.getCurrentPosition() + (int) (leftInchesP * COUNTS_PER_INCHP);
+            newRightTargetP = pelotota.PR.getCurrentPosition() + (int) (rightInchesP * COUNTS_PER_INCHP);
+            pelotota.PL.setTargetPosition(newLeftTargetP);
+            pelotota.PR.setTargetPosition(newRightTargetP);
+
+            // Turn On RUN_TO_POSITION
+            pelotota.PL.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            pelotota.PR.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+            // reset the timeout time and start motion.
+            runtime.reset();
+            pelotota.PL.setPower(Math.abs(speedP));
+            pelotota.PR.setPower(Math.abs(speedP));
+
+            // keep looping while we are still active, and there is time left, and both motors are running.
+            while (opModeIsActive() &&
+                    (runtime.seconds() < timeoutSP) &&
+                    (pelotota.PL.isBusy() && pelotota.PR.isBusy())) {
+
+                // Display it for the driver.
+                telemetry.addData("Path1", "Running to %7d :%7d", newLeftTargetP, newRightTargetP);
+                telemetry.addData("Path2", "Running at %7d :%7d",
+                        pelotota.PL.getCurrentPosition(),
+                        pelotota.PR.getCurrentPosition());
+                telemetry.update();
+            }
+
+            // Stop all motion;
+            pelotota.PL.setPower(0);
+            pelotota.PR.setPower(0);
+
+            // Turn off RUN_TO_POSITION
+            pelotota.PL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            pelotota.PR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+            sleep(2500);   // optional pause after each move
         }
     }
 }
