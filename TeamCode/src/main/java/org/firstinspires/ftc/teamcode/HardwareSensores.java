@@ -37,6 +37,8 @@ import android.view.View;
 import com.qualcomm.hardware.hitechnic.HiTechnicNxtGyroSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.ColorSensor;
+import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
+import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.hardware.GyroSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.LegacyModule;
@@ -55,33 +57,34 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  */
 
 
-@Disabled
 public class HardwareSensores {
-  public OpticalDistanceSensor odsSensor;  // Hardware Device Object
-  public ColorSensor colorSensor;  // Hardware Device Object
-  public LightSensor lightSensor;  // Hardware Device Object
-  public GyroSensor Gyro;
-
+  ColorSensor sensorRGB;
+  DeviceInterfaceModule cdim;
 
   HardwareMap hwMap           =  null;
   private ElapsedTime period  = new ElapsedTime();
 
-  public float hsvValues[] = {0F,0F,0F};
-  public final float values[] = hsvValues;
-  public final View relativeLayout = ((Activity) hwMap.appContext).findViewById(com.qualcomm.ftcrobotcontroller.R.id.RelativeLayout);
-  public boolean bPrevStateCOLOR = false;
-  public boolean bCurrStateCOLOR = false;
-  public boolean bLedOnCOLOR = true;
-  public double whiteLineIntensityValue = 23.6; //Replace accordingly
-  public double blackMatIntensityValue = 1.24;  //And here
-  public double targetIntensity = whiteLineIntensityValue + blackMatIntensityValue / 2;
-  public boolean bPrevStateLL = false;
-  public boolean bCurrStateLL = false;
-  public boolean bLedOnLL = true;
-  public boolean bLedOnOD = true;
+  static final int LED_CHANNEL = 6;
+
+    // hsvValues is an array that will hold the hue, saturation, and value information.
+    float hsvValues[] = {0F,0F,0F};
+
+    // values is a reference to the hsvValues array.
+    final float values[] = hsvValues;
+
+    // get a reference to the RelativeLayout so we can change the background
+    // color of the Robot Controller app to match the hue detected by the RGB sensor.
+    final View relativeLayout = ((Activity) hwMap.appContext).findViewById(com.qualcomm.ftcrobotcontroller.R.id.RelativeLayout);
+
+    // bPrevState and bCurrState represent the previous and current state of the button.
+    boolean bPrevState = false;
+    boolean bCurrState = false;
+
+    // bLedOn represents the state of the LED.
+    boolean bLedOn = true;
 
 
-  public HardwareSensores()
+    public HardwareSensores()
   {
   }
 
@@ -90,14 +93,19 @@ public class HardwareSensores {
 
     hwMap=ahwMap;
 
-    Gyro = ahwMap.gyroSensor.get("giroscopioSensor");
+    // get a reference to our DeviceInterfaceModule object.
+    cdim = hwMap.deviceInterfaceModule.get("dim");
 
-    odsSensor = ahwMap.opticalDistanceSensor.get("sensorOD");
-    colorSensor = ahwMap.colorSensor.get("sensorColor");
-    lightSensor = ahwMap.lightSensor.get("sensorLight");
-    lightSensor.enableLed(bLedOnLL);
-    colorSensor.enableLed(bLedOnCOLOR);
-    lightSensor.enableLed(bLedOnOD);
+    // set the digital channel to output mode.
+    // remember, the Adafruit sensor is actually two devices.
+    // It's an I2C sensor and it's also an LED that can be turned on or off.
+    cdim.setDigitalChannelMode(LED_CHANNEL, DigitalChannelController.Mode.OUTPUT);
+
+    // get a reference to our ColorSensor object.
+    sensorRGB = hwMap.colorSensor.get("adargbsensor");
+
+    // turn the LED on in the beginning, just so user will know that the sensor is active.
+    cdim.setDigitalChannelState(LED_CHANNEL, bLedOn);
 
   }
 

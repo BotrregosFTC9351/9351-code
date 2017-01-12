@@ -32,10 +32,15 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+import android.graphics.Color;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -64,20 +69,30 @@ import com.qualcomm.robotcore.util.ElapsedTime;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AutoEncoders")
-public class AutoEncoders extends LinearOpMode {
+@Autonomous(name="AutoDispararyBeaconsEncoders", group="Pushbot")
+public class AutoDispararyBeaconsEncoders extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareOmniWheels         robotDrive   = new HardwareOmniWheels();   // Use a Pushbot's hardware
-        private ElapsedTime runtime = new ElapsedTime();
+    HardwareDisparador disparador = new HardwareDisparador();
+    HardwareSensores sensores = new HardwareSensores();
+    private ElapsedTime     runtime = new ElapsedTime();
 
-        static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: TETRIX Motor Encoder
-        static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
-        static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
-        static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
-                                                          (WHEEL_DIAMETER_INCHES * 3.1415);
-        static final double     DRIVE_SPEED             = 0.6;
-        static final double     TURN_SPEED              = 0.5;
+    static final double     COUNTS_PER_MOTOR_REV    = 1120 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTION    = 2.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHES   = 4.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCH         = (COUNTS_PER_MOTOR_REV * DRIVE_GEAR_REDUCTION) /
+                                                      (WHEEL_DIAMETER_INCHES * 3.1415);
+    static final double     DRIVE_SPEED             = 0.6;
+    static final double     TURN_SPEED              = 0.5;
+
+    static final double     COUNTS_PER_MOTOR_REVD    = 1120 ;    // eg: TETRIX Motor Encoder
+    static final double     DRIVE_GEAR_REDUCTIOND   = 2.0 ;     // This is < 1.0 if geared UP
+    static final double     WHEEL_DIAMETER_INCHESD   = 4.0 ;     // For figuring circumference
+    static final double     COUNTS_PER_INCHD       = (COUNTS_PER_MOTOR_REVD * DRIVE_GEAR_REDUCTIOND) /
+            (WHEEL_DIAMETER_INCHESD * 3.1415);
+    static final double     DRIVE_SPEEDD             = 0.6;
+    static final double     TURN_SPEEDD            = 0.5;
 
     @Override
     public void runOpMode() {
@@ -87,42 +102,63 @@ public class AutoEncoders extends LinearOpMode {
          * The init() method of the hardware class does all the work here
          */
         robotDrive.init(hardwareMap);
-
-        // Send telemetry message to signify robot waiting;
-        telemetry.addData("Status", "Resetting Encoders");    //
-        telemetry.update();
+        disparador.init(hardwareMap);
+        sensores.init(hardwareMap);
 
         robotDrive.backLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robotDrive.backRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robotDrive.frontRightMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         idle();
 
         robotDrive.backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robotDrive.backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         robotDrive.frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        // Send telemetry message to indicate successful Encoder reset
-        telemetry.addData("Path0",  "Starting at %7d :%7d",
-                          robotDrive.backLeftMotor.getCurrentPosition(),
-                          robotDrive.frontLeftMotor.getCurrentPosition(),
-                          robotDrive.backRightMotor.getCurrentPosition(),
-                          robotDrive.frontLeftMotor.getCurrentPosition());
-        telemetry.update();
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  10,  10, 3.0);  // S1: Forward 47 Inches with 5 Sec timeout
-        //encoderDrive(TURN_SPEED,   12, -12, 4.0);  // S2: Turn Right 12 Inches with 4 Sec timeout
-        //encoderDrive(DRIVE_SPEED, -24, -24, 4.0);  // S3: Reverse 24 Inches with 4 Sec timeout
-
-        telemetry.addData("Path", "Complete");
-        telemetry.update();
+        encoderDrive(DRIVE_SPEED,  -2,  -2, 2.0);  // S1: Forward 3 Inches with 2 Sec timeout
+        disparador.disparadorMotor.setPower(1);
+        sleep(2000);
+        encoderDrive(TURN_SPEED,   2, -2, 2.0);  // S2: Turn Left 3 Inches with 2 Sec timeout
+        encoderDrive(DRIVE_SPEED, -2, -2, 2.0);  // S3: Forward 3 Inches with 2 Sec timeout
+        encoderDrive(TURN_SPEED,   -2, 2, 2.0);  // S2: Turn Right 3 Inches with 2 Sec timeout
+        encoderDrive(DRIVE_SPEED, -2, -2, 2.0);  // S3: Forward 3 Inches with 2 Sec timeout
+        encoderDrive(TURN_SPEED,   -2, 2, 2.0);  // S2: Turn Right 3 Inches with 2 Sec timeout
+        encoderDrive(DRIVE_SPEED, 2, 2, 2.0);  // S3: Reverse 3 Inches with 2 Sec timeout
+        Color.RGBToHSV((sensores.sensorRGB.red() * 255) / 800, (sensores.sensorRGB.green() * 255) / 800, (sensores.sensorRGB.blue() * 255) / 800, sensores.hsvValues);
+        sensores.relativeLayout.post(new Runnable() {
+            public void run() {
+                sensores.relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, sensores.values));
+            }
+        });
+        if (sensores.hsvValues[0] > 187 && sensores.hsvValues[0] < 230) {
+            encoderDrive(DRIVE_SPEED, 2, 2, 2.0);  // S3: Reverse 3 Inches with 2 Sec timeout
+        } else {
+            encoderDrive(TURN_SPEED,   2, -2, 2.0);  // S2: Turn Left 3 Inches with 2 Sec timeout
+            encoderDrive(DRIVE_SPEED, -2, -2, 2.0);  // S3: Forward 3 Inches with 2 Sec timeout
+            encoderDrive(TURN_SPEED,   -2, 2, 2.0);  // S2: Turn Right 3 Inches with 2 Sec timeout
+            encoderDrive(DRIVE_SPEED, 2, 2, 2.0);  // S3: Reverse 3 Inches with 2 Sec timeout
+            sleep(2000);
+        }
+        encoderDrive(DRIVE_SPEED, -2, -2, 2.0);  // S3: Forward 3 Inches with 2 Sec timeout
+        encoderDrive(TURN_SPEED,   -2, 2, 2.0);  // S2: Turn Right 3 Inches with 2 Sec timeout
+        encoderDrive(DRIVE_SPEED, 2, 2, 2.0);  // S3: Reverse 3 Inches with 2 Sec timeout
+        if (sensores.hsvValues[0] > 187 && sensores.hsvValues[0] < 230) {
+            encoderDrive(DRIVE_SPEED, 2, 2, 2.0);  // S3: Reverse 3 Inches with 2 Sec timeout
+        } else {
+            encoderDrive(TURN_SPEED,   2, -2, 2.0);  // S2: Turn Left 3 Inches with 2 Sec timeout
+            encoderDrive(DRIVE_SPEED, -2, -2, 2.0);  // S3: Forward 3 Inches with 2 Sec timeout
+            encoderDrive(TURN_SPEED,   -2, 2, 2.0);  // S2: Turn Right 3 Inches with 2 Sec timeout
+            encoderDrive(DRIVE_SPEED, 2, 2, 2.0);  // S3: Reverse 3 Inches with 2 Sec timeout
+            sleep(2000);
+        }
     }
+
 
     /*
      *  Method to perfmorm a relative move, based on encoder counts.
@@ -155,41 +191,34 @@ public class AutoEncoders extends LinearOpMode {
 
             // Turn On RUN_TO_POSITION
             robotDrive.backLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-            robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robotDrive.backRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
             robotDrive.frontRightMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // reset the timeout time and start motion.
             runtime.reset();
             robotDrive.backLeftMotor.setPower(Math.abs(speed));
-            robotDrive.frontLeftMotor.setPower(Math.abs(speed));
             robotDrive.backRightMotor.setPower(Math.abs(speed));
+            robotDrive.frontLeftMotor.setPower(Math.abs(speed));
             robotDrive.frontRightMotor.setPower(Math.abs(speed));
 
             // keep looping while we are still active, and there is time left, and both motors are running.
             while (opModeIsActive() &&
                    (runtime.seconds() < timeoutS) &&
-                   (robotDrive.backLeftMotor.isBusy() && robotDrive.frontLeftMotor.isBusy() && robotDrive.backRightMotor.isBusy() && robotDrive.frontRightMotor.isBusy())) {
-
-                // Display it for the driver.
-                telemetry.addData("Path1",  "Running to %7d :%7d", newFrontLeftTarget,  newFrontRightTarget);
-                telemetry.addData("Path2",  "Running at %7d :%7d",
-                                            robotDrive.frontLeftMotor.getCurrentPosition(),
-                                            robotDrive.frontRightMotor.getCurrentPosition());
-                telemetry.update();
+                   (robotDrive.backLeftMotor.isBusy() && robotDrive.backRightMotor.isBusy() && robotDrive.frontRightMotor.isBusy() )) {
             }
 
             // Stop all motion;
             robotDrive.backLeftMotor.setPower(0);
-            robotDrive.frontLeftMotor.setPower(0);
             robotDrive.backRightMotor.setPower(0);
+            robotDrive.frontLeftMotor.setPower(0);
             robotDrive.frontRightMotor.setPower(0);
 
             // Turn off RUN_TO_POSITION
             robotDrive.backLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robotDrive.backRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             robotDrive.frontRightMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            robotDrive.frontLeftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
             sleep(250);   // optional pause after each move
         }
