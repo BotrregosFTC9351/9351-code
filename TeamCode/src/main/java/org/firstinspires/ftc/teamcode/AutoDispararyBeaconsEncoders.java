@@ -160,7 +160,7 @@ public class AutoDispararyBeaconsEncoders extends LinearOpMode {
                 relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
             }
         });
-        sleep(2000);
+        sleep(2001);
         if (hsvValues[0] > 187 && hsvValues[0] < 230) {
             encoderDrive(DRIVE_SPEED, .2, .2, .15, .15, 1.0);  // S3: Reverse 3 Inches with 2 Sec timeout
         } else {
