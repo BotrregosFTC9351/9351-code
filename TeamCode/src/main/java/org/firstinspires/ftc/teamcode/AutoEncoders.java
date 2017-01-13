@@ -37,15 +37,12 @@ import android.graphics.Color;
 import android.view.View;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DeviceInterfaceModule;
 import com.qualcomm.robotcore.hardware.DigitalChannelController;
 import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
 
 /**
  * This file illustrates the concept of driving a path based on encoder counts.
@@ -74,8 +71,8 @@ import org.firstinspires.ftc.robotcontroller.external.samples.HardwarePushbot;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 
-@Autonomous(name="AutoDispararyBeaconsEncoders", group="Pushbot")
-public class AutoDispararyBeaconsEncoders extends LinearOpMode {
+@Autonomous(name="AutoEncoders", group="Pushbot")
+public class AutoEncoders extends LinearOpMode {
 
     /* Declare OpMode members. */
     HardwareOmniWheels         robotDrive   = new HardwareOmniWheels();   // Use a Pushbot's hardware
@@ -146,37 +143,41 @@ public class AutoDispararyBeaconsEncoders extends LinearOpMode {
 
         // Step through each leg of the path,
         // Note: Reverse movement is obtained by setting a negative distance (not speed)
-        encoderDrive(DRIVE_SPEED,  -.4, -.4,  -.37, -.37, 1.0);  // S1: Forward 3 Inches with 2 Sec timeout
+        encoderDrive(DRIVE_SPEED,  -.5,  -.4, 1.0);  // S1: Forward 3 Inches with 2 Sec timeout
         disparadorMotor.setPower(1);
-        sleep(700);
-        disparadorMotor.setPower(0);
-        encoderDrive(TURN_SPEED,   .35, -.35, -.32, .32, 1.0);  // S2: Slide Left
-        encoderDrive(DRIVE_SPEED, -.45, -.45,  -.4, -.4, .95);  // S3: Forward 3 Inches with 2 Sec timeout
-        encoderDrive(TURN_SPEED,   -.20, -.20, .20, .20, .85);  // S2: Turn Right 3 Inches with 2 Sec timeout
-        encoderDrive(DRIVE_SPEED, .4, .4, .38, .38, 1.2);  // S3: Reverse 3 Inches with 2 Sec timeout
+        sleep(500);
+        encoderDrive(TURN_SPEED,   .25, -.15, 1.0);  // S2: Turn Left 3 Inches with 2 Sec timeout
+        encoderDrive(DRIVE_SPEED, -.5, -.25, 2.0);  // S3: Forward 3 Inches with 2 Sec timeout
+        encoderDrive(TURN_SPEED,   -.5, .25, 2.0);  // S2: Turn Right 3 Inches with 2 Sec timeout
+        encoderDrive(DRIVE_SPEED, -.5, -.25, 2.0);  // S3: Forward 3 Inches with 2 Sec timeout
+        encoderDrive(TURN_SPEED,   -.51, .25, 2.0);  // S2: Turn Right 3 Inches with 2 Sec timeout
+        encoderDrive(DRIVE_SPEED, .5, .25, 2.0);  // S3: Reverse 3 Inches with 2 Sec timeout
         Color.RGBToHSV((sensorRGB.red() * 255) / 800, (sensorRGB.green() * 255) / 800, (sensorRGB.blue() * 255) / 800, hsvValues);
         relativeLayout.post(new Runnable() {
             public void run() {
                 relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
             }
         });
-        sleep(2000);
         if (hsvValues[0] > 187 && hsvValues[0] < 230) {
-            encoderDrive(DRIVE_SPEED, .2, .2, .15, .15, 1.0);  // S3: Reverse 3 Inches with 2 Sec timeout
+            encoderDrive(DRIVE_SPEED, 2, 2, 2.0);  // S3: Reverse 3 Inches with 2 Sec timeout
         } else {
-            encoderDrive(TURN_SPEED,   .30, -.30, -.27, .27, 1.0);  // S2: Slide Left
-            encoderDrive(DRIVE_SPEED, .2, .2, .15, .15, 1.0);  // S3: Reverse 3 Inches with 2 Sec timeout
-            sleep(500);
+            encoderDrive(TURN_SPEED,   2, -2, 2.0);  // S2: Turn Left 3 Inches with 2 Sec timeout
+            encoderDrive(DRIVE_SPEED, -2, -2, 2.0);  // S3: Forward 3 Inches with 2 Sec timeout
+            encoderDrive(TURN_SPEED,   -2, 2, 2.0);  // S2: Turn Right 3 Inches with 2 Sec timeout
+            encoderDrive(DRIVE_SPEED, 2, 2, 2.0);  // S3: Reverse 3 Inches with 2 Sec timeout
+            sleep(2000);
         }
-        encoderDrive(DRIVE_SPEED, -.4, -.4,  -.35, -.35, 1.0);  // S3: Forward 3 Inches with 2 Sec timeout
-        encoderDrive(TURN_SPEED,   .6, -.6, -.55, .55, 2.0);  // S2: Slide Left
-        encoderDrive(DRIVE_SPEED, .35, .35, .32, .32, 1.0);  // S3: Reverse 3 Inches with 2 Sec timeout
+        encoderDrive(DRIVE_SPEED, -2, -2, 2.0);  // S3: Forward 3 Inches with 2 Sec timeout
+        encoderDrive(TURN_SPEED,   -2, 2, 2.0);  // S2: Turn Right 3 Inches with 2 Sec timeout
+        encoderDrive(DRIVE_SPEED, 2, 2, 2.0);  // S3: Reverse 3 Inches with 2 Sec timeout
         if (hsvValues[0] > 187 && hsvValues[0] < 230) {
-            encoderDrive(DRIVE_SPEED, .4, .4, .35, .35, 1.0);  // S3: Reverse 3 Inches with 2 Sec timeout
+            encoderDrive(DRIVE_SPEED, 2, 2, 2.0);  // S3: Reverse 3 Inches with 2 Sec timeout
         } else {
-            encoderDrive(TURN_SPEED,   .30, -.30, -.27, .27, 1.0);  // S2: Slide Left
-            encoderDrive(DRIVE_SPEED, .2, .2, .15, .15, 1.0);  // S3: Reverse 3 Inches with 2 Sec timeout
-            sleep(500);
+            encoderDrive(TURN_SPEED,   2, -2, 2.0);  // S2: Turn Left 3 Inches with 2 Sec timeout
+            encoderDrive(DRIVE_SPEED, -2, -2, 2.0);  // S3: Forward 3 Inches with 2 Sec timeout
+            encoderDrive(TURN_SPEED,   -2, 2, 2.0);  // S2: Turn Right 3 Inches with 2 Sec timeout
+            encoderDrive(DRIVE_SPEED, 2, 2, 2.0);  // S3: Reverse 3 Inches with 2 Sec timeout
+            sleep(2000);
         }
     }
 
@@ -190,10 +191,11 @@ public class AutoDispararyBeaconsEncoders extends LinearOpMode {
      *  3) Driver stops the opmode running.
      */
     public void encoderDrive(double speed,
-                             double backLeftInches, double frontLeftInches,  double backRightInches, double frontRightInches,
+                             double leftInches, double rightInches,
                              double timeoutS) {
         int newBackLeftTarget;
         int newFrontLeftTarget;
+
         int newBackRightTarget;
         int newFrontRightTarget;
 
@@ -201,10 +203,10 @@ public class AutoDispararyBeaconsEncoders extends LinearOpMode {
         if (opModeIsActive()) {
 
             // Determine new target position, and pass to motor controller
-            newBackLeftTarget = robotDrive.backLeftMotor.getCurrentPosition() + (int)(backLeftInches * COUNTS_PER_INCH);
-            newFrontLeftTarget = robotDrive.frontLeftMotor.getCurrentPosition() + (int)(frontLeftInches * COUNTS_PER_INCH);
-            newBackRightTarget = robotDrive.backRightMotor.getCurrentPosition() + (int)(backRightInches * COUNTS_PER_INCH);
-            newFrontRightTarget = robotDrive.frontRightMotor.getCurrentPosition() + (int)(frontRightInches * COUNTS_PER_INCH);
+            newBackLeftTarget = robotDrive.backLeftMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newFrontLeftTarget = robotDrive.frontLeftMotor.getCurrentPosition() + (int)(leftInches * COUNTS_PER_INCH);
+            newBackRightTarget = robotDrive.backRightMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
+            newFrontRightTarget = robotDrive.frontRightMotor.getCurrentPosition() + (int)(rightInches * COUNTS_PER_INCH);
             robotDrive.backLeftMotor.setTargetPosition(newBackLeftTarget);
             robotDrive.frontLeftMotor.setTargetPosition(newFrontLeftTarget);
             robotDrive.backRightMotor.setTargetPosition(newBackRightTarget);
