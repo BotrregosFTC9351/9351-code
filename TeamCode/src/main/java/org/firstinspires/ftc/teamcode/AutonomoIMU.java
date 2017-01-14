@@ -59,6 +59,7 @@ import java.util.Locale;
  */
 
 @Autonomous(name = "AutonomoIMU", group = "Sensor")
+        @Disabled
 public class AutonomoIMU extends LinearOpMode
     {
 

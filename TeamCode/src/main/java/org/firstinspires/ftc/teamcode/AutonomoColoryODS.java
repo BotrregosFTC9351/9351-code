@@ -72,6 +72,7 @@ import com.qualcomm.robotcore.hardware.OpticalDistanceSensor;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 @Autonomous(name = "AutonomoColoryODS")
+@Disabled
 public class AutonomoColoryODS extends LinearOpMode {
 
   HardwareOmniWheels robotDrive           = new HardwareOmniWheels();   // Use a Omni Drive Train's hardware

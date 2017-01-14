@@ -34,6 +34,7 @@ package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.adafruit.BNO055IMU;
 import com.qualcomm.hardware.adafruit.JustLoggingAccelerationIntegrator;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -63,7 +64,7 @@ import java.util.Locale;
  */
 
 @TeleOp(name="OmniDriveConIMU")
-//@Disabled
+@Disabled
 public class OmniDriveConIMU extends LinearOpMode
 {
 

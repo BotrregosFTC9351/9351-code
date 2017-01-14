@@ -153,14 +153,14 @@ public class AutoDispararyBeaconsEncoders extends LinearOpMode {
         encoderDrive(TURN_SPEED,   .35, -.35, -.32, .32, 1.0);  // S2: Slide Left
         encoderDrive(DRIVE_SPEED, -.45, -.45,  -.4, -.4, .95);  // S3: Forward 3 Inches with 2 Sec timeout
         encoderDrive(TURN_SPEED,   -.20, -.20, .20, .20, .85);  // S2: Turn Right 3 Inches with 2 Sec timeout
-        encoderDrive(DRIVE_SPEED, .4, .4, .38, .38, 1.2);  // S3: Reverse 3 Inches with 2 Sec timeout
+        encoderDrive(DRIVE_SPEED, .4, .4, .39, .39, 1.2);  // S3: Reverse 3 Inches with 2 Sec timeout
         Color.RGBToHSV((sensorRGB.red() * 255) / 800, (sensorRGB.green() * 255) / 800, (sensorRGB.blue() * 255) / 800, hsvValues);
         relativeLayout.post(new Runnable() {
             public void run() {
                 relativeLayout.setBackgroundColor(Color.HSVToColor(0xff, values));
             }
         });
-        sleep(2001);
+        sleep(2001 );
         if (hsvValues[0] > 187 && hsvValues[0] < 230) {
             encoderDrive(DRIVE_SPEED, .2, .2, .15, .15, 1.0);  // S3: Reverse 3 Inches with 2 Sec timeout
         } else {
