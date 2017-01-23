@@ -60,7 +60,7 @@ public class TeleOpOmniDriveTrain extends LinearOpMode
     HardwareOmniWheels robotDrive           = new HardwareOmniWheels();   // Use a Omni Drive Train's hardware
     HardwareServo servo = new HardwareServo();
     HardwareElevador elevador = new HardwareElevador();
-    HardwareDisparador disparador = new HardwareDisparador();
+    HardwareDisparador disparador = new HardwareDisparador ();
     HardwarePelotota pelotota = new HardwarePelotota();
 
     private ElapsedTime runtime = new ElapsedTime();
